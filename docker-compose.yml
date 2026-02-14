@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - NEXTAUTH_SECRET=your-secret-key-here
+      - NEXTAUTH_URL=http://localhost:3000
+    volumes:
+      - ./prisma/dev.db:/app/prisma/dev.db
+    restart: unless-stopped
+
+  # Redis - Caching ve Session Store için
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

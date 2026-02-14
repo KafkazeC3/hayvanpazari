@@ -1,0 +1,117 @@
+'use client';
+
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+interface Props {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error: Error | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false,
+    error: null,
+  };
+
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
+    // Burada hata raporlama servisine gönderebilirsiniz (Sentry, vb.)
+  }
+
+  private handleReset = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  public render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      return <ErrorFallback error={this.state.error} onReset={this.handleReset} />;
+    }
+
+    return this.props.children;
+  }
+}
+
+function ErrorFallback({ 
+  error, 
+  onReset 
+}: { 
+  error: Error | null;
+  onReset: () => void;
+}) {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-earth-50/30">
+      <div className="max-w-md w-full text-center">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 flex items-center justify-center">
+          <AlertTriangle className="h-10 w-10 text-red-500" />
+        </div>
+        
+        <h1 className="text-2xl font-bold text-earth-800 mb-2">
+          Bir Hata Oluştu
+        </h1>
+        
+        <p className="text-earth-500 mb-6">
+          Üzgünüz, bir şeyler yanlış gitti. Lütfen tekrar deneyin.
+        </p>
+        
+        {error && process.env.NODE_ENV === 'development' && (
+          <div className="mb-6 p-4 bg-red-50 rounded-lg text-left overflow-auto">
+            <p className="text-sm font-mono text-red-600">{error.message}</p>
+            {error.stack && (
+              <pre className="mt-2 text-xs text-red-500 overflow-x-auto">
+                {error.stack.split('\n').slice(1, 4).join('\n')}
+              </pre>
+            )}
+          </div>
+        )}
+        
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button 
+            onClick={onReset}
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Tekrar Dene
+          </Button>
+          
+          <Link href="/">
+            <Button className="gradient-nature text-white gap-2">
+              <Home className="h-4 w-4" />
+              Anasayfa
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Error Boundary with retry functionality
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  fallback?: ReactNode
+) {
+  return function WithErrorBoundaryWrapper(props: P) {
+    return (
+      <ErrorBoundary fallback={fallback}>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
+}
