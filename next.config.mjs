@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Vercel serverless için standalone yerine default
+  // output: 'standalone',
   
   images: {
     unoptimized: true,
@@ -18,6 +19,11 @@ const nextConfig = {
   
   // Static generation timeout sorununu çöz
   staticPageGenerationTimeout: 1000,
+  
+  // Vercel serverless fonksiyonlar için
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+  },
 };
 
 export default nextConfig;
