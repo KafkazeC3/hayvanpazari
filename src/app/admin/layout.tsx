@@ -1,8 +1,6 @@
-import { AdminSidebar } from '@/components/admin/AdminSidebar';
+'use client';
 
-export const metadata = {
-  title: 'Admin Panel | HayvanPazarı.com',
-};
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 
 export const dynamic = 'force-dynamic';
 
