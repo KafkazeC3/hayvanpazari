@@ -1,5 +1,8 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
+import { useEffect, useState } from 'react';
 import { 
   Users, 
   ClipboardList, 
@@ -10,48 +13,92 @@ import {
   Clock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import prisma from '@/lib/db';
 
-async function getStats() {
-  const [
-    totalUsers,
-    totalListings,
-    pendingListings,
-    activeListings,
-    totalViews,
-    recentUsers,
-    recentListings
-  ] = await Promise.all([
-    prisma.user.count(),
-    prisma.listing.count(),
-    prisma.listing.count({ where: { isApproved: false } }),
-    prisma.listing.count({ where: { status: 'ACTIVE', isApproved: true } }),
-    prisma.listing.aggregate({ _sum: { viewCount: true } }),
-    prisma.user.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, name: true, email: true, createdAt: true }
-    }),
-    prisma.listing.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: { user: { select: { name: true } } }
-    })
-  ]);
-
-  return {
-    totalUsers,
-    totalListings,
-    pendingListings,
-    activeListings,
-    totalViews: totalViews._sum.viewCount || 0,
-    recentUsers,
-    recentListings
-  };
+interface DashboardStats {
+  totalUsers: number;
+  totalListings: number;
+  pendingListings: number;
+  activeListings: number;
+  totalViews: number;
+  recentUsers: Array<{
+    id: string;
+    name: string;
+    email: string;
+    createdAt: string;
+  }>;
+  recentListings: Array<{
+    id: string;
+    title: string;
+    isApproved: boolean;
+    user: { name: string };
+  }>;
 }
 
-export default async function AdminDashboard() {
-  const stats = await getStats();
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        // API'den veri çek
+        const [usersRes, listingsRes] = await Promise.all([
+          fetch('/api/admin/users'),
+          fetch('/api/admin/listings')
+        ]);
+        
+        const usersData = await usersRes.json();
+        const listingsData = await listingsRes.json();
+        
+        const totalUsers = usersData.users?.length || 0;
+        const totalListings = listingsData.listings?.length || 0;
+        const pendingListings = listingsData.listings?.filter((l: any) => !l.isApproved)?.length || 0;
+        const activeListings = listingsData.listings?.filter((l: any) => l.status === 'ACTIVE' && l.isApproved)?.length || 0;
+        const totalViews = listingsData.listings?.reduce((sum: number, l: any) => sum + (l.viewCount || 0), 0) || 0;
+        
+        setStats({
+          totalUsers,
+          totalListings,
+          pendingListings,
+          activeListings,
+          totalViews,
+          recentUsers: usersData.users?.slice(0, 5) || [],
+          recentListings: listingsData.listings?.slice(0, 5) || [],
+        });
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+        // Mock data fallback
+        setStats({
+          totalUsers: 0,
+          totalListings: 0,
+          pendingListings: 0,
+          activeListings: 0,
+          totalViews: 0,
+          recentUsers: [],
+          recentListings: [],
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchStats();
+  }, []);
+
+  if (loading || !stats) {
+    return (
+      <div className="p-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-earth-200 rounded w-48 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-32 bg-earth-200 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const statCards = [
     {
