@@ -179,7 +179,7 @@ model Message {
   readAt        DateTime?
   
   // İlişkili mesaj (yanıt için)
-  parentId      String?
+    parentId      String?
   parent        Message?  @relation("MessageReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies       Message[] @relation("MessageReplies")
   
@@ -188,7 +188,6 @@ model Message {
   
   @@index([senderId, receiverId])
   @@index([listingId])
-  @@map("messages")
 }
 
 // Değerlendirmeler (Yorum ve puan)
