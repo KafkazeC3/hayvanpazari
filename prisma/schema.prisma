@@ -180,7 +180,7 @@ model Message {
   
   // İlişkili mesaj (yanıt için)
   parentId      String?
-  parent        Message?  @relation("MessageReplies", fields: [parentId], references: [id])
+  parent        Message?  @relation("MessageReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies       Message[] @relation("MessageReplies")
   
   createdAt     DateTime  @default(now())
