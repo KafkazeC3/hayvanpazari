@@ -1,7 +1,3 @@
-'use client';
-
-
-
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
