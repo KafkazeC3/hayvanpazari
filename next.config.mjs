@@ -13,7 +13,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  // SWC Minify kapalı - Babel kullan
+  // SWC Minify kapalı
   swcMinify: false,
   
   // React Strict Mode kapalı
@@ -21,6 +21,11 @@ const nextConfig = {
   
   // Pages Router
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  
+  // App Router tamamen kapalı
+  experimental: {
+    appDir: false,
+  },
 };
 
 export default nextConfig;
