@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Eye, Heart, Share2, Phone, MessageCircle, ChevronLeft, ChevronRight, Flag } from 'lucide-react';
@@ -16,11 +16,12 @@ import { listings } from '@/data/mockData';
 import { formatPrice, formatDate, getInitials } from '@/lib/utils';
 
 export default function ListingDetailPage() {
-  const params = useParams();
+  const router = useRouter();
+  const { id } = router.query;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const listing = listings.find((l) => l.id === params.id);
+  const listing = listings.find((l) => l.id === id);
 
   if (!listing) {
     return (

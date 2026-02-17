@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Search, MapPin, SlidersHorizontal, Grid3X3, List, X, Loader2 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
@@ -43,10 +43,10 @@ const sortOptions = [
 ];
 
 export default function ListingsPage() {
-  const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('q') || '';
-  const initialCategory = searchParams.get('category') || '';
-  const initialCity = searchParams.get('city') || '';
+  const router = useRouter();
+  const initialQuery = (router.query.q as string) || '';
+  const initialCategory = (router.query.category as string) || '';
+  const initialCity = (router.query.city as string) || '';
 
   const [listings, setListings] = useState<Listing[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
