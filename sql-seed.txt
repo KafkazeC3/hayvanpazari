@@ -1,0 +1,19 @@
+-- Önce mevcut tabloları kontrol et
+SELECT * FROM "Category" LIMIT 1;
+SELECT * FROM "User" LIMIT 1;
+
+-- Kategorileri ekle (Büyük harf - Prisma schema'daki gibi)
+INSERT INTO "categories" (id, name, slug, description, "order", "isActive", "createdAt", "updatedAt") 
+VALUES 
+('1', 'Büyükbaş Hayvanlar', 'buyukbas', 'İnek, dana ilanları', 1, true, NOW(), NOW()),
+('2', 'Küçükbaş Hayvanlar', 'kucukbas', 'Koyun, keçi ilanları', 2, true, NOW(), NOW()),
+('3', 'Kanatlı Hayvanlar', 'kanatli', 'Tavuk, hindi ilanları', 3, true, NOW(), NOW()),
+('4', 'Atlar', 'atlar', 'At ilanları', 4, true, NOW(), NOW()),
+('5', 'Evcil Hayvanlar', 'evcil', 'Köpek, kedi ilanları', 5, true, NOW(), NOW()),
+('6', 'Diğer', 'diger', 'Diğer ilanlar', 6, true, NOW(), NOW())
+ON CONFLICT DO NOTHING;
+
+-- Varsayılan kullanıcı ekle
+INSERT INTO "users" (id, email, password, name, phone, city, district, "isVerified", "isActive", "isAdmin", rating, "reviewCount", "createdAt", "updatedAt")
+VALUES ('1', 'test@hayvanpazari.com', 'testpassword123', 'Test Kullanıcı', '05551234567', 'İstanbul', 'Kadıköy', true, true, false, 0, 0, NOW(), NOW())
+ON CONFLICT DO NOTHING;

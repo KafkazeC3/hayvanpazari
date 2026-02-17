@@ -20,7 +20,7 @@ export default async function handler(
       // Build filter
       const where: any = {
         status: status as string,
-        isApproved: true,
+        // isApproved: true, // Test için devre dışı bırakıldı
       };
 
       if (category) {
