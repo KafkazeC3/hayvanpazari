@@ -13,13 +13,8 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  staticPageGenerationTimeout: 1000,
-  
-  reactStrictMode: false,
-  
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
-  },
+  // Pages Router için gerekli
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
 };
 
 export default nextConfig;
