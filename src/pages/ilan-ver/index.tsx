@@ -1,32 +1,31 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { ListingForm } from '@/components/listings/ListingForm';
-
+import Head from 'next/head';
 
 export default function CreateListingPage() {
   return (
-    <main className="min-h-screen bg-earth-50/30">
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center max-w-2xl mx-auto mb-10"
-        >
-          <h1 className="text-3xl font-bold text-earth-800 mb-3">
+    <>
+      <Head>
+        <title>Ücretsiz İlan Ver | HayvanPazarı.com</title>
+      </Head>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f4' }}>
+        {/* Simple navbar */}
+        <nav style={{ background: 'white', padding: '1rem 2rem', borderBottom: '1px solid #e7e5e4' }}>
+          <a href="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#16a34a', textDecoration: 'none' }}>
+            HayvanPazarı.com
+          </a>
+        </nav>
+        {/* Simple content */}
+        <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1c1917', marginBottom: '1rem', textAlign: 'center' }}>
             Ücretsiz İlan Ver
           </h1>
-          <p className="text-earth-500">
+          <p style={{ color: '#57534e', textAlign: 'center', marginBottom: '2rem' }}>
             Hayvanınızı veya ürününüzü dakikalar içinde binlerce alıcıya ulaştırın.
           </p>
-        </motion.div>
-
-        <ListingForm />
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '12px' }}>
+            <p style={{ color: '#78716c', textAlign: 'center' }}>İlan formu yakında hazır olacak...</p>
+          </div>
+        </div>
       </div>
-      <Footer />
-    </main>
+    </>
   );
 }

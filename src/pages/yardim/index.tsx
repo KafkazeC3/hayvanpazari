@@ -1,150 +1,50 @@
-'use client';
-
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { Search, BookOpen, Shield, CreditCard, MessageCircle, FileText } from 'lucide-react';
-import Link from 'next/link';
 import Head from 'next/head';
-
-const helpCategories = [
-  {
-    icon: BookOpen,
-    title: 'Başlangıç',
-    description: 'Platformu nasıl kullanacağınızı öğrenin',
-    links: [
-      { label: 'Hesap Oluşturma', href: '/nasil-calisir' },
-      { label: 'İlan Verme', href: '/nasil-calisir' },
-      { label: 'Arama Yapma', href: '/nasil-calisir' },
-    ],
-  },
-  {
-    icon: Shield,
-    title: 'Güvenlik',
-    description: 'Güvenli alışveriş için ipuçları',
-    links: [
-      { label: 'Güvenlik Önerileri', href: '/guvenlik' },
-      { label: 'Dolandırıcılıktan Korunma', href: '/guvenlik' },
-      { label: 'Hesap Güvenliği', href: '/guvenlik' },
-    ],
-  },
-  {
-    icon: CreditCard,
-    title: 'Ödeme',
-    description: 'Ödeme ve faturalama hakkında',
-    links: [
-      { label: 'Ödeme Yöntemleri', href: '/sss' },
-      { label: 'İlan Paketleri', href: '/sss' },
-      { label: 'Fatura İşlemleri', href: '/sss' },
-    ],
-  },
-  {
-    icon: MessageCircle,
-    title: 'İletişim',
-    description: 'Bizimle iletişime geçin',
-    links: [
-      { label: 'Destek Talebi', href: '/iletisim' },
-      { label: 'Şikayet Bildir', href: '/iletisim' },
-      { label: 'Öneri Gönder', href: '/iletisim' },
-    ],
-  },
-  {
-    icon: FileText,
-    title: 'Yasal',
-    description: 'Yasal bilgiler ve politikalar',
-    links: [
-      { label: 'Kullanım Koşulları', href: '/kullanim-kosullari' },
-      { label: 'Gizlilik Politikası', href: '/gizlilik' },
-      { label: 'KVKK Aydınlatma Metni', href: '/gizlilik' },
-    ],
-  },
-  {
-    icon: Search,
-    title: 'Sıkça Sorulanlar',
-    description: 'En çok merak edilen sorular',
-    links: [
-      { label: 'SSS Sayfası', href: '/sss' },
-      { label: 'Ücretler', href: '/sss' },
-      { label: 'İlan Süreleri', href: '/sss' },
-    ],
-  },
-];
-
 
 export default function HelpPage() {
   return (
-    <main className="min-h-screen">
+    <>
       <Head>
         <title>Yardım Merkezi | HayvanPazarı.com</title>
-        <meta name="description" content="HayvanPazarı.com yardım merkezi ve destek kaynakları." />
       </Head>
-      <Navbar />
-      
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-nature-600 to-nature-800 py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Yardım Merkezi</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-            Size nasıl yardımcı olabiliriz?
-          </p>
-          <div className="max-w-xl mx-auto relative">
-            <input 
-              type="text" 
-              placeholder="Yardım arayın..." 
-              className="w-full h-14 pl-12 pr-4 rounded-xl border-0 focus:ring-2 focus:ring-white/50"
-            />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-earth-400" />
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {helpCategories.map((category, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-card p-6 hover:shadow-card-hover transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-nature-100 flex items-center justify-center mb-4">
-                  <category.icon className="h-6 w-6 text-nature-600" />
-                </div>
-                <h3 className="font-bold text-earth-800 mb-2">{category.title}</h3>
-                <p className="text-sm text-earth-500 mb-4">{category.description}</p>
-                <ul className="space-y-2">
-                  {category.links.map((link, linkIndex) => (
-                    <li key={linkIndex}>
-                      <Link href={link.href} className="text-sm text-nature-600 hover:text-nature-700 hover:underline">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact CTA */}
-      <section className="py-16 bg-earth-50/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-earth-800 mb-4">Yardıma mı ihtiyacınız var?</h2>
-            <p className="text-earth-600 mb-6">
-              Aradığınız cevabı bulamadınız mı? Destek ekibimiz size yardımcı olmaya hazır.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/iletisim" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-nature-600 text-white rounded-xl font-medium hover:bg-nature-700 transition-colors">
-                <MessageCircle className="h-5 w-5" />
-                Bize Ulaşın
-              </a>
-              <a href="tel:08501234567" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-nature-600 border border-nature-600 rounded-xl font-medium hover:bg-nature-50 transition-colors">
-                <span>0850 123 45 67</span>
-              </a>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f4' }}>
+        {/* Simple navbar */}
+        <nav style={{ background: 'white', padding: '1rem 2rem', borderBottom: '1px solid #e7e5e4' }}>
+          <a href="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#16a34a', textDecoration: 'none' }}>
+            HayvanPazarı.com
+          </a>
+        </nav>
+        {/* Simple content */}
+        <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1c1917', marginBottom: '2rem', textAlign: 'center' }}>
+            Yardım Merkezi
+          </h1>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ fontWeight: 'bold', color: '#1c1917', marginBottom: '0.5rem' }}>Başlangıç</h3>
+              <p style={{ color: '#57534e', fontSize: '0.875rem' }}>Hesap oluşturma, ilan verme ve arama yapma</p>
+            </div>
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ fontWeight: 'bold', color: '#1c1917', marginBottom: '0.5rem' }}>Güvenlik</h3>
+              <p style={{ color: '#57534e', fontSize: '0.875rem' }}>Güvenli alışveriş için ipuçları</p>
+            </div>
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ fontWeight: 'bold', color: '#1c1917', marginBottom: '0.5rem' }}>Ödeme</h3>
+              <p style={{ color: '#57534e', fontSize: '0.875rem' }}>Ödeme yöntemleri ve faturalama</p>
+            </div>
+            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ fontWeight: 'bold', color: '#1c1917', marginBottom: '0.5rem' }}>İletişim</h3>
+              <p style={{ color: '#57534e', fontSize: '0.875rem' }}>Destek talebi ve şikayet bildirimi</p>
             </div>
           </div>
+          
+          <div style={{ backgroundColor: '#dcfce7', padding: '2rem', borderRadius: '12px', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#166534', marginBottom: '0.5rem' }}>Yardıma mı ihtiyacınız var?</h2>
+            <p style={{ color: '#166534', marginBottom: '1rem' }}>Aradığınız cevabı bulamadınız mı?</p>
+            <a href="/iletisim" style={{ color: '#16a34a', fontWeight: '600', textDecoration: 'none' }}>Bize Ulaşın</a>
+          </div>
         </div>
-      </section>
-
-      <Footer />
-    </main>
+      </div>
+    </>
   );
 }
