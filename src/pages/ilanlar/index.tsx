@@ -2,14 +2,18 @@
 
 import { useState } from 'react';
 import Head from 'next/head';
-import { NavbarSimple } from '@/components/NavbarSimple';
-import { FooterSimple } from '@/components/FooterSimple';
+import { NavbarModern } from '@/components/NavbarModern';
+import { ListingCardModern } from '@/components/ListingCardModern';
+import { FooterModern } from '@/components/FooterModern';
 import { mockListings, categories } from '@/data/mockListings';
 import { sortedCities, getDistricts } from '@/data/cities';
+import { Search, SlidersHorizontal, Grid3X3, List, ChevronDown } from 'lucide-react';
 
 export default function ListingsPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
   
   const districts = selectedCity ? getDistricts(selectedCity) : [];
 
@@ -18,204 +22,140 @@ export default function ListingsPage() {
     setSelectedDistrict('');
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('tr-TR').format(price) + ' ₺';
-  };
-
   return (
     <>
       <Head>
         <title>İlanlar | HayvanPazarı.com</title>
-        <meta name="description" content="Satılık hayvan ilanları - Büyükbaş, küçükbaş, kanatlı hayvanlar ve daha fazlası" />
+        <meta name="description" content="Satılık hayvan ilanları" />
       </Head>
-      
-      <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-        <NavbarSimple />
-        
+
+      <div className="min-h-screen bg-gray-50">
+        <NavbarModern />
+
         {/* Header */}
-        <div style={{ background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', padding: '3rem 2rem' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h1 style={{ color: 'white', fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-              İlanlar
-            </h1>
-            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.125rem' }}>
-              {mockListings.length}+ aktif ilan arasından size uygun olanı bulun
-            </p>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 pt-20 pb-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">İlanlar</h1>
+            <p className="text-green-100">{mockListings.length}+ aktif ilan arasından size uygun olanı bulun</p>
           </div>
         </div>
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-          {/* Filter Bar */}
-          <div style={{ 
-            background: 'white', 
-            padding: '1.5rem', 
-            borderRadius: '0.75rem', 
-            marginBottom: '2rem',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-            display: 'flex',
-            gap: '1rem',
-            flexWrap: 'wrap'
-          }}>
-            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '180px' }}>
-              <option value="">Tüm Kategoriler</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-            
-            <select 
-              value={selectedCity}
-              onChange={(e) => handleCityChange(e.target.value)}
-              style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '180px' }}
-            >
-              <option value="">Tüm Şehirler</option>
-              {sortedCities.map(city => (
-                <option key={city.id} value={city.name}>{city.name}</option>
-              ))}
-            </select>
-            
-            <select 
-              value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
-              disabled={!selectedCity}
-              style={{ 
-                padding: '0.75rem', 
-                border: '1px solid #e5e7eb', 
-                borderRadius: '0.5rem', 
-                minWidth: '180px',
-                backgroundColor: !selectedCity ? '#f3f4f6' : 'white'
-              }}
-            >
-              <option value="">{selectedCity ? 'Tüm İlçeler' : 'Önce şehir seçin'}</option>
-              {districts.map(district => (
-                <option key={district.id} value={district.name}>{district.name}</option>
-              ))}
-            </select>
-            
-            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '150px' }}>
-              <option value="">Sıralama</option>
-              <option value="newest">En Yeni</option>
-              <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
-              <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
-            </select>
-            
-            <input 
-              type="text" 
-              placeholder="İlan ara..." 
-              style={{ 
-                flex: 1, 
-                minWidth: '200px', 
-                padding: '0.75rem', 
-                border: '1px solid #e5e7eb', 
-                borderRadius: '0.5rem' 
-              }} 
-            />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Filters Bar */}
+          <div className="bg-white rounded-2xl shadow-sm p-4 mb-8">
+            {/* Search & Main Filters */}
+            <div className="flex flex-col lg:flex-row gap-4 mb-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input 
+                  type="text" 
+                  placeholder="İlan ara..."
+                  className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                />
+              </div>
+              
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="lg:hidden flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl text-gray-700"
+              >
+                <SlidersHorizontal className="w-5 h-5" />
+                Filtrele
+              </button>
+
+              <div className={`${showFilters ? 'block' : 'hidden'} lg:flex flex-col lg:flex-row gap-4`}>
+                <select className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none min-w-[180px]">
+                  <option value="">Tüm Kategoriler</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+
+                <select 
+                  value={selectedCity}
+                  onChange={(e) => handleCityChange(e.target.value)}
+                  className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none min-w-[180px]"
+                >
+                  <option value="">Tüm Şehirler</option>
+                  {sortedCities.map(city => (
+                    <option key={city.id} value={city.name}>{city.name}</option>
+                  ))}
+                </select>
+
+                <select 
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedCity}
+                  className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none min-w-[180px] disabled:bg-gray-100"
+                >
+                  <option value="">Tüm İlçeler</option>
+                  {districts.map(district => (
+                    <option key={district.id} value={district.name}>{district.name}</option>
+                  ))}
+                </select>
+
+                <select className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none min-w-[150px]">
+                  <option value="">Sıralama</option>
+                  <option value="newest">En Yeni</option>
+                  <option value="price_asc">Fiyat: Düşük-Yüksek</option>
+                  <option value="price_desc">Fiyat: Yüksek-Düşük</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filters & View Toggle */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span className="font-medium">{mockListings.length}</span> ilan bulundu
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-green-100 text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  <Grid3X3 className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-green-100 text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  <List className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Listings Grid */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
-            gap: '1.5rem' 
-          }}>
+          <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
             {mockListings.map((listing) => (
-              <a 
-                key={listing.id} 
-                href={`/ilan/${listing.id}`}
-                style={{ 
-                  background: 'white', 
-                  borderRadius: '1rem', 
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                }}
-              >
-                <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
-                  <img 
-                    src={listing.image} 
-                    alt={listing.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <div style={{ 
-                    position: 'absolute', 
-                    top: '0.75rem', 
-                    left: '0.75rem',
-                    background: 'rgba(34, 197, 94, 0.9)',
-                    color: 'white',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '9999px',
-                    fontSize: '0.75rem',
-                    fontWeight: 600
-                  }}>
-                    {listing.category}
-                  </div>
-                </div>
-                <div style={{ padding: '1.25rem' }}>
-                  <h3 style={{ 
-                    fontSize: '1.125rem', 
-                    fontWeight: 600, 
-                    color: '#111827', 
-                    marginBottom: '0.5rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    {listing.title}
-                  </h3>
-                  <p style={{ 
-                    color: '#6b7280', 
-                    fontSize: '0.875rem', 
-                    marginBottom: '1rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical'
-                  }}>
-                    {listing.description}
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#16a34a' }}>
-                      {formatPrice(listing.price)}
-                    </span>
-                    <span style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
-                      {listing.date}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid #e5e7eb' }}>
-                    <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                      📍 {listing.city}, {listing.district}
-                    </span>
-                    <span style={{ fontSize: '0.875rem', color: '#22c55e', fontWeight: 500 }}>
-                      {listing.seller.name}
-                    </span>
-                  </div>
-                </div>
-              </a>
+              <ListingCardModern key={listing.id} {...listing} />
             ))}
           </div>
 
           {/* Pagination */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '3rem' }}>
-            <button style={{ padding: '0.5rem 1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', background: 'white', cursor: 'pointer' }}>Önceki</button>
-            <button style={{ padding: '0.5rem 1rem', border: 'none', borderRadius: '0.5rem', background: '#22c55e', color: 'white', cursor: 'pointer' }}>1</button>
-            <button style={{ padding: '0.5rem 1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', background: 'white', cursor: 'pointer' }}>2</button>
-            <button style={{ padding: '0.5rem 1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', background: 'white', cursor: 'pointer' }}>3</button>
-            <button style={{ padding: '0.5rem 1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', background: 'white', cursor: 'pointer' }}>Sonraki</button>
+          <div className="flex justify-center mt-12">
+            <div className="flex items-center gap-2">
+              <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                Önceki
+              </button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded-lg font-medium">
+                1
+              </button>
+              <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                2
+              </button>
+              <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                3
+              </button>
+              <span className="px-2 text-gray-400">...</span>
+              <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+                Sonraki
+              </button>
+            </div>
           </div>
         </div>
 
-        <FooterSimple />
+        <FooterModern />
       </div>
     </>
   );
