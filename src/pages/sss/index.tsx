@@ -58,11 +58,6 @@ function FAQItem({ question, answer, isOpen, onClick }: { question: string; answ
   );
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);

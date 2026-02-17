@@ -17,11 +17,6 @@ import { currentUser, listings } from '@/data/mockData';
 import { getInitials } from '@/lib/utils';
 import { ListingCard } from '@/components/listings/ListingCard';
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('listings');

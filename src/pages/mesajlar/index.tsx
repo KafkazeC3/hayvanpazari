@@ -46,11 +46,6 @@ interface Conversation {
   unread_count: number;
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function MessagesPage() {
   const router = useRouter();

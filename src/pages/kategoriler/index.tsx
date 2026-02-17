@@ -16,11 +16,6 @@ const colorMap: Record<string, string> = {
   '4': 'from-blue-500 to-blue-600' 
 };
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function CategoriesPage() {
   return (

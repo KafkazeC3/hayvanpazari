@@ -36,11 +36,6 @@ interface User {
   createdAt: string;
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);

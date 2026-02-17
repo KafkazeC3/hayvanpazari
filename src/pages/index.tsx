@@ -23,12 +23,6 @@ const stats = [
   { value: '81', label: 'Şehir', icon: Shield },
 ];
 
-// SSR için getServerSideProps
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function HomePage() {
   return (

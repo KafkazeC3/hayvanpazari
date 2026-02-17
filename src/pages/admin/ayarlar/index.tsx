@@ -13,11 +13,6 @@ interface Setting {
   description: string | null;
 }
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Setting[]>([]);

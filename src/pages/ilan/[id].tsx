@@ -15,11 +15,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { listings } from '@/data/mockData';
 import { formatPrice, formatDate, getInitials } from '@/lib/utils';
 
-export async function getServerSideProps() {
-  return {
-    props: {},
-  };
-}
 
 export default function ListingDetailPage() {
   const router = useRouter();
