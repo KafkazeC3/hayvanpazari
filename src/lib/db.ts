@@ -3,22 +3,29 @@
 
 import { PrismaClient } from '@prisma/client';
 
-// Build sırasında (DATABASE_URL yoksa) mock client dön
-if (!process.env.DATABASE_URL) {
-  console.warn('DATABASE_URL not found, using mock PrismaClient');
-}
+// Build sırasında mock client dön
+const isBuild = process.env.NODE_ENV === 'production' && typeof window === 'undefined';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Lazy initialization - sadece ilk kullanımda oluştur
-export const prisma = globalForPrisma.prisma ?? 
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
+// Build sırasında geçici mock client
+const mockPrisma = {
+  user: { count: async () => 0, findMany: async () => [], findUnique: async () => null },
+  listing: { count: async () => 0, findMany: async () => [], findUnique: async () => null },
+  category: { findMany: async () => [] },
+  setting: { findMany: async () => [] },
+} as unknown as PrismaClient;
 
-if (process.env.NODE_ENV !== 'production') {
+// Lazy initialization
+export const prisma = isBuild 
+  ? mockPrisma 
+  : (globalForPrisma.prisma ?? new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    }));
+
+if (!isBuild && process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 

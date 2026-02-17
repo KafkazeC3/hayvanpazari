@@ -20,6 +20,9 @@ const nextConfig = {
   // Vercel serverless için external packages
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
 };
 
