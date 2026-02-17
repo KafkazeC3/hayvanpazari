@@ -13,7 +13,13 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  // Pages Router için gerekli
+  // SWC Minify kapalı - Babel kullan
+  swcMinify: false,
+  
+  // React Strict Mode kapalı
+  reactStrictMode: false,
+  
+  // Pages Router
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
 };
 
