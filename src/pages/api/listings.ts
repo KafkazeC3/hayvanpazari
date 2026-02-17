@@ -113,7 +113,51 @@ export default async function handler(
 
       // Validation
       if (!title || !description || !price || !city || !district) {
-        return res.status(400).json({ error: 'Eksik alanlar var' });
+        return res.status(400).json({ 
+          error: 'Eksik alanlar var',
+          details: { title, description, price, city, district }
+        });
+      }
+
+      // Check if default category exists
+      let finalCategoryId = categoryId;
+      if (!finalCategoryId) {
+        const defaultCategory = await prisma.category.findFirst();
+        if (!defaultCategory) {
+          // Create default category if none exists
+          const newCategory = await prisma.category.create({
+            data: {
+              name: 'Diğer',
+              slug: 'diger',
+              description: 'Diğer kategoriler',
+            }
+          });
+          finalCategoryId = newCategory.id;
+        } else {
+          finalCategoryId = defaultCategory.id;
+        }
+      }
+
+      // Check if default user exists
+      let finalUserId = userId;
+      if (!finalUserId) {
+        const defaultUser = await prisma.user.findFirst();
+        if (!defaultUser) {
+          // Create a default user
+          const newUser = await prisma.user.create({
+            data: {
+              email: 'default@hayvanpazari.com',
+              password: 'defaultpassword',
+              name: 'İsimsiz Kullanıcı',
+              phone: '0000000000',
+              city: 'İstanbul',
+              district: 'Merkez',
+            }
+          });
+          finalUserId = newUser.id;
+        } else {
+          finalUserId = defaultUser.id;
+        }
       }
 
       // Create listing
@@ -125,9 +169,9 @@ export default async function handler(
           city,
           district,
           images: JSON.stringify(images || []),
-          categoryId: categoryId || '1', // Default category
-          userId: userId || '1', // Default user (should be from auth)
-          status: 'PENDING', // Needs approval
+          categoryId: finalCategoryId,
+          userId: finalUserId,
+          status: 'PENDING',
           isApproved: false,
         },
         include: {
@@ -151,7 +195,10 @@ export default async function handler(
       });
     } catch (error) {
       console.error('Error creating listing:', error);
-      return res.status(500).json({ error: 'İlan oluşturulurken hata oluştu' });
+      return res.status(500).json({ 
+        error: 'İlan oluşturulurken hata oluştu',
+        details: error instanceof Error ? error.message : 'Bilinmeyen hata'
+      });
     }
   }
 
