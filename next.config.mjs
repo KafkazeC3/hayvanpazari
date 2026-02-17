@@ -17,6 +17,9 @@ const nextConfig = {
   // Static generation timeout sorununu çöz
   staticPageGenerationTimeout: 1000,
   
+  // SWC minify hatalarını önle
+  swcMinify: false,
+  
   // Vercel serverless için external packages
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],

@@ -1,4 +1,5 @@
-import type { Metadata, Viewport } from 'next';
+'use client';
+
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
@@ -9,35 +10,6 @@ import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'HayvanPazarı.com - Türkiye\'nin En Büyük Hayvan Pazarı',
-  description: 'HayvanPazarı.com ile güvenli ve hızlı şekilde hayvan alım satımı yapın. Büyükbaş, küçükbaş, kanatlı hayvanlar ve daha fazlası.',
-  keywords: 'hayvan pazarı, büyükbaş, küçükbaş, kanatlı hayvanlar, satılık hayvan, hayvan alım satım',
-  authors: [{ name: 'HayvanPazarı.com' }],
-  manifest: '/manifest.json',
-  icons: {
-    icon: [
-      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-    ],
-  },
-  openGraph: {
-    title: 'HayvanPazarı.com - Türkiye\'nin En Büyük Hayvan Pazarı',
-    description: 'Güvenli ve hızlı hayvan alım satım platformu',
-    type: 'website',
-    locale: 'tr_TR',
-  },
-};
-
-export const viewport: Viewport = {
-  themeColor: '#22c55e',
-  width: 'device-width',
-  initialScale: 1,
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -45,6 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
+      <head>
+        <title>HayvanPazarı.com - Türkiye'nin En Büyük Hayvan Pazarı</title>
+        <meta name="description" content="HayvanPazarı.com ile güvenli ve hızlı şekilde hayvan alım satımı yapın." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#22c55e" />
+      </head>
       <body className={inter.className}>
         <SessionProvider>
           <FavoritesProvider>
