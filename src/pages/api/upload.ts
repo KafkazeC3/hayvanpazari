@@ -47,9 +47,27 @@ export default async function handler(
       success: true,
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('Cloudinary Upload Error:', error);
+    
+    // Daha detaylı hata mesajı
+    let errorMessage = 'Yükleme başarısız oldu';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Yaygın hataları kontrol et
+      if (errorMessage.includes('Invalid API Key')) {
+        errorMessage = 'Geçersiz API Key. Cloudinary API Key\'inizi kontrol edin.';
+      } else if (errorMessage.includes('Invalid API Secret')) {
+        errorMessage = 'Geçersiz API Secret. Cloudinary API Secret\'inizi kontrol edin.';
+      } else if (errorMessage.includes('cloud_name')) {
+        errorMessage = 'Geçersiz Cloud Name. Cloudinary Cloud Name\'inizi kontrol edin.';
+      } else if (errorMessage.includes('timed out')) {
+        errorMessage = 'Bağlantı zaman aşımına uğradı. İnternet bağlantınızı kontrol edin.';
+      }
+    }
+    
     return res.status(500).json({ 
-      error: 'Yükleme başarısız oldu',
+      error: errorMessage,
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
