@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Temel ayarlar
   images: {
     unoptimized: true,
   },
   
   trailingSlash: true,
   
-  // Build hatalarını çözmek için
+  // Hata toleransı
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -14,15 +15,27 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  // Static generation timeout sorununu çöz
+  // Build timeout
   staticPageGenerationTimeout: 1000,
   
-  // Vercel serverless için external packages
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
+  // React Strict Mode kapalı
+  reactStrictMode: false,
+  
+  // SWC Minify kapalı
+  swcMinify: false,
+  
+  // Experimental kapalı
+  experimental: {},
+  
+  // Webpack config - tüm sayfaları dynamic yap
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
   },
 };
 
