@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Head from 'next/head';
 import { NavbarSimple } from '@/components/NavbarSimple';
 import { FooterSimple } from '@/components/FooterSimple';
