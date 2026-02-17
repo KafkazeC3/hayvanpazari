@@ -5,6 +5,12 @@ import { Footer } from '@/components/layout/Footer';
 import { CheckCircle, Users, TrendingUp, Award } from 'lucide-react';
 import Head from 'next/head';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen">

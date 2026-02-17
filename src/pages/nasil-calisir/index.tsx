@@ -5,6 +5,12 @@ import { Footer } from '@/components/layout/Footer';
 import { Search, PlusCircle, MessageCircle, HandshakeIcon } from 'lucide-react';
 import Head from 'next/head';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function HowItWorksPage() {
   return (
     <main className="min-h-screen">

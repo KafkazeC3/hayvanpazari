@@ -4,6 +4,12 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import Head from 'next/head';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function KVKKPage() {
   return (
     <main className="min-h-screen">

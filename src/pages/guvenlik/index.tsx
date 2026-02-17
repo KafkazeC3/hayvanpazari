@@ -5,6 +5,12 @@ import { Footer } from '@/components/layout/Footer';
 import { Shield, AlertTriangle, CheckCircle, Eye, Lock, Phone } from 'lucide-react';
 import Head from 'next/head';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function SecurityPage() {
   return (
     <main className="min-h-screen">

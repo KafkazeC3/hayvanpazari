@@ -32,6 +32,12 @@ interface DashboardStats {
   }>;
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);

@@ -11,6 +11,12 @@ import { useFavorites } from '@/contexts/FavoritesContext';
 import { useUI } from '@/contexts/UIContext';
 import { useAuth } from '@/contexts/AuthContext';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function FavoritesPage() {
   const { isAuthenticated } = useAuth();
   const { favoriteListings, removeFavorite, isLoading } = useFavorites();

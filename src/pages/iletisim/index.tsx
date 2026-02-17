@@ -9,6 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);

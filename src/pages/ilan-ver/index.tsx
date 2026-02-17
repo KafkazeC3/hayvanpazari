@@ -5,6 +5,12 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { ListingForm } from '@/components/listings/ListingForm';
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function CreateListingPage() {
   return (
     <main className="min-h-screen bg-earth-50/30">

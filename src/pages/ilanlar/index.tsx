@@ -42,6 +42,12 @@ const sortOptions = [
   { value: 'popular', label: 'En Çok Görüntülenen' },
 ];
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function ListingsPage() {
   const router = useRouter();
   const initialQuery = (router.query.q as string) || '';

@@ -40,6 +40,12 @@ interface Listing {
   };
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
