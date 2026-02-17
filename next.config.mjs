@@ -17,12 +17,16 @@ const nextConfig = {
   // Static generation timeout sorununu çöz
   staticPageGenerationTimeout: 1000,
   
-  // SWC minify hatalarını önle
-  swcMinify: false,
+  // Build sırasında tüm sayfaları dynamic yap
+  output: 'export',
+  distDir: 'dist',
   
-  // Vercel serverless için external packages
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+  // Tüm sayfaları dynamic export yap
+  exportPathMap: async function (
+    defaultPathMap,
+    { dev, dir, outDir, distDir, buildId }
+  ) {
+    return defaultPathMap;
   },
 };
 
