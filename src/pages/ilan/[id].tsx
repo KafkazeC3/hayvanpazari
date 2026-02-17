@@ -1,14 +1,14 @@
 'use client';
 
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { NavbarSimple } from '@/components/NavbarSimple';
 import { FooterSimple } from '@/components/FooterSimple';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { useFavorites } from '@/hooks/useFavorites';
 import { mockListings } from '@/data/mockListings';
-import { MapPin, Calendar, Phone, User, ChevronLeft, ChevronRight, X, Heart, Share2, Flag, MessageCircle, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Phone, User, ChevronLeft, ChevronRight, X, Heart, Share2, Flag, MessageCircle, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 // Benzer İlanlar Komponenti
@@ -103,8 +103,43 @@ export default function ListingDetailPage() {
   const { id } = router.query;
   const [selectedImage, setSelectedImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [listing, setListing] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
-  const listing = mockListings.find(l => l.id === id);
+  // Fetch listing from API
+  useEffect(() => {
+    if (!id) return;
+    
+    const fetchListing = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/listings/${id}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'İlan alınırken hata oluştu');
+        }
+        
+        setListing(data);
+      } catch (err) {
+        setError((err as Error).message);
+        // Fallback to mock data
+        const mockListing = mockListings.find(l => l.id === id);
+        if (mockListing) {
+          setListing({
+            ...mockListing,
+            images: mockListing.images || [mockListing.image],
+            seller: mockListing.seller,
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchListing();
+  }, [id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR').format(price) + ' ₺';

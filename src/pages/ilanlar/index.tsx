@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { NavbarModern } from '@/components/NavbarModern';
@@ -8,10 +8,28 @@ import { ListingCardModern } from '@/components/ListingCardModern';
 import { FooterModern } from '@/components/FooterModern';
 import { mockListings, categories } from '@/data/mockListings';
 import { sortedCities, getDistricts } from '@/data/cities';
-import { Search, SlidersHorizontal, Grid3X3, List, X, ChevronDown } from 'lucide-react';
+import { Search, SlidersHorizontal, Grid3X3, List, X, ChevronDown, Loader2 } from 'lucide-react';
+
+interface Listing {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  city: string;
+  district: string;
+  category: string;
+  images: string[];
+  date: string;
+  seller: { name: string; phone: string };
+}
 
 export default function ListingsPage() {
   const router = useRouter();
+  
+  // Listings state
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
   // Filters state
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,59 +45,38 @@ export default function ListingsPage() {
   
   const districts = selectedCity ? getDistricts(selectedCity) : [];
 
-  // Filter and sort listings
-  const filteredListings = useMemo(() => {
-    let result = [...mockListings];
-    
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(l => 
-        l.title.toLowerCase().includes(query) ||
-        l.description.toLowerCase().includes(query) ||
-        l.category.toLowerCase().includes(query)
-      );
-    }
-    
-    // Category filter
-    if (selectedCategory) {
-      result = result.filter(l => l.category === selectedCategory);
-    }
-    
-    // City filter
-    if (selectedCity) {
-      result = result.filter(l => l.city === selectedCity);
-    }
-    
-    // District filter
-    if (selectedDistrict) {
-      result = result.filter(l => l.district === selectedDistrict);
-    }
-    
-    // Price filter
-    if (minPrice) {
-      result = result.filter(l => l.price >= parseInt(minPrice));
-    }
-    if (maxPrice) {
-      result = result.filter(l => l.price <= parseInt(maxPrice));
-    }
-    
-    // Sort
-    switch (sortBy) {
-      case 'price_asc':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price_desc':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'newest':
-      default:
-        result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        break;
-    }
-    
-    return result;
-  }, [searchQuery, selectedCategory, selectedCity, selectedDistrict, minPrice, maxPrice, sortBy]);
+  // Fetch listings from API
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (selectedCategory) params.append('category', selectedCategory);
+        if (selectedCity) params.append('city', selectedCity);
+        if (selectedDistrict) params.append('district', selectedDistrict);
+        if (minPrice) params.append('minPrice', minPrice);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        if (searchQuery) params.append('search', searchQuery);
+
+        const response = await fetch(`/api/listings?${params.toString()}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'İlanlar alınırken hata oluştu');
+        }
+
+        setListings(data.listings);
+      } catch (err) {
+        setError((err as Error).message);
+        // Fallback to mock data on error
+        setListings(mockListings.map(l => ({...l, images: l.images || [l.image]})));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, [selectedCategory, selectedCity, selectedDistrict, minPrice, maxPrice, searchQuery]);
 
   const activeFiltersCount = [
     selectedCategory, selectedCity, selectedDistrict, minPrice, maxPrice
@@ -114,7 +111,7 @@ export default function ListingsPage() {
         <div className="bg-gradient-to-r from-green-500 to-green-600 pt-20 pb-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">İlanlar</h1>
-            <p className="text-green-100">{filteredListings.length} aktif ilan arasından size uygun olanı bulun</p>
+            <p className="text-green-100">{listings.length} aktif ilan arasından size uygun olanı bulun</p>
           </div>
         </div>
 
@@ -230,7 +227,7 @@ export default function ListingsPage() {
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm text-gray-600">
-                  <span className="font-medium">{filteredListings.length}</span> ilan bulundu
+                  <span className="font-medium">{listings.length}</span> ilan bulundu
                 </span>
                 
                 {/* Active filter badges */}
@@ -278,7 +275,7 @@ export default function ListingsPage() {
           </div>
 
           {/* Listings Grid */}
-          {filteredListings.length === 0 ? (
+          {listings.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Search className="w-12 h-12 text-gray-400" />
@@ -295,14 +292,14 @@ export default function ListingsPage() {
             </div>
           ) : (
             <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
-              {filteredListings.map((listing) => (
+              {listings.map((listing) => (
                 <ListingCardModern key={listing.id} {...listing} />
               ))}
             </div>
           )}
 
           {/* Pagination - Only show if results exist */}
-          {filteredListings.length > 0 && (
+          {listings.length > 0 && (
             <div className="flex justify-center mt-12">
               <div className="flex items-center gap-2">
                 <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50" disabled>

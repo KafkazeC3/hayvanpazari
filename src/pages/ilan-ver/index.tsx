@@ -43,11 +43,38 @@ export default function CreateListingPage() {
 
     setSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setSubmitting(false);
-    setSubmitted(true);
+    try {
+      const response = await fetch('/api/listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          price: formData.price,
+          city: formData.city,
+          district: formData.district,
+          images: formData.images,
+          categoryId: formData.category,
+          // TODO: Get actual userId from auth
+          userId: '1',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'İlan oluşturulurken hata oluştu');
+      }
+
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error creating listing:', error);
+      alert('İlan oluşturulurken hata oluştu: ' + (error as Error).message);
+      setSubmitting(false);
+    }
   };
 
   return (
