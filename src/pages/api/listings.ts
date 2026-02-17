@@ -92,7 +92,10 @@ export default async function handler(
       });
     } catch (error) {
       console.error('Error fetching listings:', error);
-      return res.status(500).json({ error: 'İlanlar alınırken hata oluştu' });
+      return res.status(500).json({ 
+        error: 'İlanlar alınırken hata oluştu',
+        details: error instanceof Error ? error.message : 'Bilinmeyen hata'
+      });
     }
   }
 
