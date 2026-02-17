@@ -178,7 +178,7 @@ export default function ListingsPage() {
                 >
                   <option value="">Tüm İlçeler</option>
                   {districts.map(district => (
-                    <option key={district} value={district}>{district}</option>
+                    <option key={district.id} value={district.name}>{district.name}</option>
                   ))}
                 </select>
 
