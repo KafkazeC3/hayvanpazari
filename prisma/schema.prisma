@@ -12,7 +12,6 @@ datasource db {
 
 // Kullanıcı modeli
 model User {
-  @@map("users")
   id            String    @id @default(uuid())
   email         String    @unique
   password      String
@@ -51,7 +50,6 @@ model User {
 
 // Kategori modeli
 model Category {
-  @@map("categories")
   id            String    @id @default(uuid())
   name          String    @unique
   slug          String    @unique
@@ -91,7 +89,6 @@ model Subcategory {
 
 // İlan modeli
 model Listing {
-  @@map("listings")
   id            String    @id @default(uuid())
   title         String
   description   String
@@ -154,7 +151,6 @@ model ListingFeature {
 
 // Favoriler
 model Favorite {
-  @@map("favorites")
   id            String    @id @default(uuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -168,7 +164,6 @@ model Favorite {
 
 // Mesajlar
 model Message {
-  @@map("Message")
   id            String    @id @default(uuid())
   content       String
   senderId      String
@@ -196,7 +191,6 @@ model Message {
 
 // Değerlendirmeler (Yorum ve puan)
 model Review {
-  @@map("reviews")
   id            String    @id @default(uuid())
   rating        Int       @default(5)
   comment       String?
