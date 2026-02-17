@@ -1,17 +1,19 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Shield, AlertTriangle, CheckCircle, Eye, Lock, Phone } from 'lucide-react';
-
-export const metadata = {
-  title: 'Güvenlik | HayvanPazarı.com',
-  description: 'HayvanPazarı.com güvenlik önerileri ve dolandırıcılıktan korunma yöntemleri.',
-};
+import Head from 'next/head';
 
 export default function SecurityPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Güvenlik | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com güvenlik önerileri ve dolandırıcılıktan korunma yöntemleri." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

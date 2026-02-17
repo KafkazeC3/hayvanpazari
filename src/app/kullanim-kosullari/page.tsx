@@ -1,16 +1,18 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-
-export const metadata = {
-  title: 'Kullanım Koşulları | HayvanPazarı.com',
-  description: 'HayvanPazarı.com kullanım koşulları ve üyelik sözleşmesi.',
-};
+import Head from 'next/head';
 
 export default function TermsPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Kullanım Koşulları | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com kullanım koşulları ve üyelik sözleşmesi." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

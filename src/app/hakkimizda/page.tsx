@@ -1,17 +1,19 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CheckCircle, Users, TrendingUp, Award } from 'lucide-react';
-
-export const metadata = {
-  title: 'Hakkımızda | HayvanPazarı.com',
-  description: 'Türkiye\'nin en büyük hayvan alım satım platformu HayvanPazarı.com hakkında bilgi edinin.',
-};
+import Head from 'next/head';
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Hakkımızda | HayvanPazarı.com</title>
+        <meta name="description" content="Türkiye'nin en büyük hayvan alım satım platformu HayvanPazarı.com hakkında bilgi edinin." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

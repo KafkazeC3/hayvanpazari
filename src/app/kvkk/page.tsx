@@ -1,16 +1,18 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-
-export const metadata = {
-  title: 'KVKK Aydınlatma Metni | HayvanPazarı.com',
-  description: 'HayvanPazarı.com Kişisel Verilerin Korunması Kanunu aydınlatma metni.',
-};
+import Head from 'next/head';
 
 export default function KVKKPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>KVKK Aydınlatma Metni | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com Kişisel Verilerin Korunması Kanunu aydınlatma metni." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

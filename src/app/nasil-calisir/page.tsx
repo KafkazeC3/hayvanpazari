@@ -1,17 +1,19 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Search, PlusCircle, MessageCircle, HandshakeIcon } from 'lucide-react';
-
-export const metadata = {
-  title: 'Nasıl Çalışır? | HayvanPazarı.com',
-  description: 'HayvanPazarı.com\'u nasıl kullanacağınızı öğrenin. Kolay adımlarla ilan verin ve hayvan bulun.',
-};
+import Head from 'next/head';
 
 export default function HowItWorksPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Nasıl Çalışır? | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com'u nasıl kullanacağınızı öğrenin. Kolay adımlarla ilan verin ve hayvan bulun." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

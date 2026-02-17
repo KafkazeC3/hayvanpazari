@@ -1,16 +1,18 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-
-export const metadata = {
-  title: 'Gizlilik Politikası | HayvanPazarı.com',
-  description: 'HayvanPazarı.com gizlilik politikası ve kişisel verilerin korunması.',
-};
+import Head from 'next/head';
 
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Gizlilik Politikası | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com gizlilik politikası ve kişisel verilerin korunması." />
+      </Head>
       <Navbar />
       
       {/* Hero */}

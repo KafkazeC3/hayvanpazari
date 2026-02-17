@@ -1,14 +1,12 @@
+'use client';
+
 export const dynamic = 'force-dynamic';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Search, BookOpen, Shield, CreditCard, MessageCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
-
-export const metadata = {
-  title: 'Yardım Merkezi | HayvanPazarı.com',
-  description: 'HayvanPazarı.com yardım merkezi ve destek kaynakları.',
-};
+import Head from 'next/head';
 
 const helpCategories = [
   {
@@ -76,6 +74,10 @@ const helpCategories = [
 export default function HelpPage() {
   return (
     <main className="min-h-screen">
+      <Head>
+        <title>Yardım Merkezi | HayvanPazarı.com</title>
+        <meta name="description" content="HayvanPazarı.com yardım merkezi ve destek kaynakları." />
+      </Head>
       <Navbar />
       
       {/* Hero */}
