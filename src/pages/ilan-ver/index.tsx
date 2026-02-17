@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { NavbarSimple } from '@/components/NavbarSimple';
 import { FooterSimple } from '@/components/FooterSimple';
 import { categories } from '@/data/mockListings';
+import { sortedCities, getDistricts } from '@/data/cities';
 
 export default function CreateListingPage() {
   const [step, setStep] = useState(1);
+  const [selectedCity, setSelectedCity] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -19,12 +21,17 @@ export default function CreateListingPage() {
     images: [] as string[]
   });
 
+  const districts = selectedCity ? getDistricts(selectedCity) : [];
+
+  const handleCityChange = (cityName: string) => {
+    setSelectedCity(cityName);
+    setFormData({ ...formData, city: cityName, district: '' });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert('İlanınız başarıyla oluşturuldu! Onay sürecinden sonra yayınlanacak.');
   };
-
-  const cities = ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Konya', 'Adana', 'Kayseri', 'Sivas', 'Trabzon'];
 
   return (
     <>
@@ -120,36 +127,45 @@ export default function CreateListingPage() {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                  <div>
-                    <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      Şehir *
-                    </label>
-                    <select
-                      required
-                      value={formData.city}
-                      onChange={(e) => setFormData({...formData, city: e.target.value})}
-                      style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                    >
-                      <option value="">Seçin</option>
-                      {cities.map(city => (
-                        <option key={city} value={city}>{city}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      İlçe *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.district}
-                      onChange={(e) => setFormData({...formData, district: e.target.value})}
-                      style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
-                      placeholder="Merkez"
-                    />
-                  </div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
+                    Şehir *
+                  </label>
+                  <select
+                    required
+                    value={formData.city}
+                    onChange={(e) => handleCityChange(e.target.value)}
+                    style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}
+                  >
+                    <option value="">Şehir Seçin</option>
+                    {sortedCities.map(city => (
+                      <option key={city.id} value={city.name}>{city.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
+                    İlçe *
+                  </label>
+                  <select
+                    required
+                    value={formData.district}
+                    onChange={(e) => setFormData({...formData, district: e.target.value})}
+                    disabled={!selectedCity}
+                    style={{ 
+                      width: '100%', 
+                      padding: '0.75rem', 
+                      border: '1px solid #d1d5db', 
+                      borderRadius: '0.5rem',
+                      backgroundColor: !selectedCity ? '#f3f4f6' : 'white'
+                    }}
+                  >
+                    <option value="">{selectedCity ? 'İlçe Seçin' : 'Önce şehir seçin'}</option>
+                    {districts.map(district => (
+                      <option key={district.id} value={district.name}>{district.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <button

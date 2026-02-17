@@ -4,8 +4,19 @@ import Head from 'next/head';
 import { NavbarSimple } from '@/components/NavbarSimple';
 import { FooterSimple } from '@/components/FooterSimple';
 import { mockListings, categories } from '@/data/mockListings';
+import { sortedCities, getDistricts } from '@/data/cities';
 
 export default function ListingsPage() {
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  
+  const districts = selectedCity ? getDistricts(selectedCity) : [];
+
+  const handleCityChange = (cityName: string) => {
+    setSelectedCity(cityName);
+    setSelectedDistrict('');
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR').format(price) + ' ₺';
   };
@@ -44,26 +55,49 @@ export default function ListingsPage() {
             gap: '1rem',
             flexWrap: 'wrap'
           }}>
-            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '150px' }}>
-              <option>Tüm Kategoriler</option>
+            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '180px' }}>
+              <option value="">Tüm Kategoriler</option>
               {categories.map(cat => (
-                <option key={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
-            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '150px' }}>
-              <option>Tüm Şehirler</option>
-              <option>Konya</option>
-              <option>İzmir</option>
-              <option>Adana</option>
-              <option>Ankara</option>
-              <option>İstanbul</option>
+            
+            <select 
+              value={selectedCity}
+              onChange={(e) => handleCityChange(e.target.value)}
+              style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '180px' }}
+            >
+              <option value="">Tüm Şehirler</option>
+              {sortedCities.map(city => (
+                <option key={city.id} value={city.name}>{city.name}</option>
+              ))}
             </select>
-            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '150px' }}>
-              <option>Sıralama</option>
-              <option>En Yeni</option>
-              <option>Fiyat: Düşükten Yükseğe</option>
-              <option>Fiyat: Yüksekten Düşüğe</option>
+            
+            <select 
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              disabled={!selectedCity}
+              style={{ 
+                padding: '0.75rem', 
+                border: '1px solid #e5e7eb', 
+                borderRadius: '0.5rem', 
+                minWidth: '180px',
+                backgroundColor: !selectedCity ? '#f3f4f6' : 'white'
+              }}
+            >
+              <option value="">{selectedCity ? 'Tüm İlçeler' : 'Önce şehir seçin'}</option>
+              {districts.map(district => (
+                <option key={district.id} value={district.name}>{district.name}</option>
+              ))}
             </select>
+            
+            <select style={{ padding: '0.75rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', minWidth: '150px' }}>
+              <option value="">Sıralama</option>
+              <option value="newest">En Yeni</option>
+              <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
+              <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
+            </select>
+            
             <input 
               type="text" 
               placeholder="İlan ara..." 
