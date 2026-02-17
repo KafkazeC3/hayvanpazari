@@ -30,8 +30,8 @@ export function NavbarModern() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-xl">
-                🐄
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                H
               </div>
               <span className="text-xl font-bold text-gray-800 hidden sm:block">
                 Hayvan<span className="text-green-600">Pazarı</span>

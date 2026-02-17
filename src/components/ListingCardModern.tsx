@@ -64,8 +64,8 @@ export function ListingCardModern({
         </button>
 
         {/* Price Badge */}
-        <div className="absolute bottom-3 left-3 right-3">
-          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-xl font-bold text-lg shadow-lg inline-block">
+        <div className="absolute bottom-3 left-3">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-xl font-bold text-lg shadow-lg">
             {formatPrice(price)}
           </div>
         </div>

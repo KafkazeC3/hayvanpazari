@@ -36,16 +36,18 @@ export default function ProfilePage() {
                 <div style={{ 
                   width: '120px', 
                   height: '120px', 
-                  background: '#dcfce7', 
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)', 
                   borderRadius: '50%', 
                   margin: '0 auto 1rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '4rem',
+                  fontSize: '3rem',
+                  fontWeight: 'bold',
+                  color: 'white',
                   border: '4px solid white'
                 }}>
-                  👨‍🌾
+                  AY
                 </div>
                 <h2 style={{ color: '#111827', marginBottom: '0.25rem' }}>Ahmet Yılmaz</h2>
                 <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>ahmet@email.com</p>

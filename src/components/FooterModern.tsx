@@ -33,8 +33,8 @@ export function FooterModern() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">
-                🐄
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
+                H
               </div>
               <span className="text-2xl font-bold">
                 Hayvan<span className="text-green-500">Pazarı</span>

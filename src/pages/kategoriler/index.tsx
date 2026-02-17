@@ -66,8 +66,10 @@ export default function CategoriesPage() {
                   height: '4px',
                   background: 'linear-gradient(90deg, #22c55e, #16a34a)'
                 }} />
-                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>
-                  {category.icon}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ width: '64px', height: '64px', background: '#dcfce7', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                    <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>{category.name.charAt(0)}</span>
+                  </div>
                 </div>
                 <h3 style={{ 
                   fontSize: '1.5rem', 

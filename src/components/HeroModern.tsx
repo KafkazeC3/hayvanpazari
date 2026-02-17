@@ -34,7 +34,7 @@ export function HeroModern() {
         <div className="text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <span className="flex h-2 w-2">
+            <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-200 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
