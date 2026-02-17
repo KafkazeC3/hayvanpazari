@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useMessages } from '@/hooks/useMessages';
 import { 
   Search, 
   Menu, 
@@ -18,6 +20,8 @@ import {
 export function NavbarModern() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { favoritesCount, mounted: favoritesMounted } = useFavorites();
+  const { unreadCount, mounted: messagesMounted } = useMessages();
 
   // Mock auth - ileride gerçek auth ile değiştirilecek
   const isAuthenticated = false; 
@@ -57,12 +61,38 @@ export function NavbarModern() {
 
           {/* Right Side */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Favorites Button */}
+            <Link 
+              href="/favoriler"
+              className="relative p-2 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+            >
+              <Heart className="w-5 h-5" />
+              {favoritesMounted && favoritesCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {favoritesCount > 9 ? '9+' : favoritesCount}
+                </span>
+              )}
+            </Link>
+
             {/* Search Button */}
             <Link 
               href="/ilanlar"
               className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-full transition-all"
             >
               <Search className="w-5 h-5" />
+            </Link>
+
+            {/* Messages Button */}
+            <Link 
+              href="/mesajlar"
+              className="relative p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-full transition-all"
+            >
+              <MessageCircle className="w-5 h-5" />
+              {messagesMounted && unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </Link>
 
             {/* Add Listing Button */}

@@ -1,11 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { cloudinary } from '@/lib/cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 
-export const dynamic = 'force-dynamic';
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
   },
 };
 
@@ -13,22 +20,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { method } = req;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   try {
-    if (method === 'POST') {
-      // For file uploads in Pages Router, we need to use a different approach
-      // Use multer or formidable for file parsing
-      // This is a placeholder - you'll need to implement multipart parsing
-      return res.status(501).json({ error: 'File upload requires additional setup with multer/formidable' });
-    } else if (method === 'PUT') {
-      return res.status(501).json({ error: 'File upload requires additional setup with multer/formidable' });
-    } else {
-      res.setHeader('Allow', ['POST', 'PUT']);
-      return res.status(405).end(`Method ${method} Not Allowed`);
+    const { file, folder = 'hayvanpazari/listings' } = req.body;
+
+    if (!file) {
+      return res.status(400).json({ error: 'Dosya bulunamadı' });
     }
+
+    // Base64 formatında dosya yükleme
+    const uploadResult = await cloudinary.uploader.upload(file, {
+      folder,
+      transformation: [
+        { quality: 'auto:good' },
+        { fetch_format: 'auto' },
+        { width: 1200, height: 1200, crop: 'limit' }, // Max 1200x1200
+      ],
+    });
+
+    return res.status(200).json({
+      url: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+      success: true,
+    });
   } catch (error) {
     console.error('Upload error:', error);
-    return res.status(500).json({ error: 'Yükleme başarısız oldu' });
+    return res.status(500).json({ 
+      error: 'Yükleme başarısız oldu',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

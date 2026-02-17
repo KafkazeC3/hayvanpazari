@@ -7,7 +7,11 @@ export const mockListings = [
     city: 'Konya',
     district: 'Selçuklu',
     category: 'Büyükbaş Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800',
+      'https://images.unsplash.com/photo-1566847438217-76e82d383f84?w=800',
+      'https://images.unsplash.com/photo-1595363530143-b913b4ea30dd?w=800'
+    ],
     date: '2024-02-17',
     seller: { name: 'Ahmet Yılmaz', phone: '0555 123 4567' }
   },
@@ -19,7 +23,10 @@ export const mockListings = [
     city: 'İzmir',
     district: 'Menemen',
     category: 'Küçükbaş Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1524024973431-2ad916746881?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1524024973431-2ad916746881?w=800',
+      'https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800'
+    ],
     date: '2024-02-16',
     seller: { name: 'Mehmet Kaya', phone: '0532 987 6543' }
   },
@@ -31,7 +38,12 @@ export const mockListings = [
     city: 'Adana',
     district: 'Seyhan',
     category: 'Büyükbaş Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1566847438217-76e82d383f84?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1566847438217-76e82d383f84?w=800',
+      'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800',
+      'https://images.unsplash.com/photo-1595363530143-b913b4ea30dd?w=800',
+      'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800'
+    ],
     date: '2024-02-15',
     seller: { name: 'Ali Demir', phone: '0544 456 7890' }
   },
@@ -43,7 +55,10 @@ export const mockListings = [
     city: 'Bursa',
     district: 'Osmangazi',
     category: 'Kanatlı Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5e5e7a?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1548550023-2bdb3c5e5e7a?w=800',
+      'https://images.unsplash.com/photo-1569396116180-210c182bedb8?w=800'
+    ],
     date: '2024-02-14',
     seller: { name: 'Fatma Şahin', phone: '0505 789 0123' }
   },
@@ -55,7 +70,11 @@ export const mockListings = [
     city: 'Ankara',
     district: 'Sincan',
     category: 'Atlar',
-    image: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
+      'https://images.unsplash.com/photo-1534773728080-aa06ca28f5f6?w=800'
+    ],
     date: '2024-02-13',
     seller: { name: 'Burak Özdemir', phone: '0553 234 5678' }
   },
@@ -67,7 +86,10 @@ export const mockListings = [
     city: 'İstanbul',
     district: 'Kadıköy',
     category: 'Hayvan Gıdaları',
-    image: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800',
+      'https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?w=800'
+    ],
     date: '2024-02-12',
     seller: { name: 'Pet Shop Merkezi', phone: '0212 345 6789' }
   },
@@ -79,7 +101,11 @@ export const mockListings = [
     city: 'Kayseri',
     district: 'Melikgazi',
     category: 'Küçükbaş Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800',
+      'https://images.unsplash.com/photo-1524024973431-2ad916746881?w=800',
+      'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800'
+    ],
     date: '2024-02-11',
     seller: { name: 'Hasan Çelik', phone: '0536 876 5432' }
   },
@@ -91,7 +117,10 @@ export const mockListings = [
     city: 'Sivas',
     district: 'Merkez',
     category: 'Büyükbaş Hayvanlar',
-    image: 'https://images.unsplash.com/photo-1595363530143-b913b4ea30dd?w=800',
+    images: [
+      'https://images.unsplash.com/photo-1595363530143-b913b4ea30dd?w=800',
+      'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800'
+    ],
     date: '2024-02-10',
     seller: { name: 'Recep Yıldız', phone: '0543 210 9876' }
   }

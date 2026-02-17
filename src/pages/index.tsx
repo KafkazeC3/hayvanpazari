@@ -16,58 +16,58 @@ export default function HomePage() {
     <>
       <Head>
         <title>HayvanPazarı.com - Türkiye'nin En Büyük Hayvan Pazarı</title>
-        <meta name="description" content="HayvanPazarı.com ile güvenli ve hızlı şekilde hayvan alım satımı yapın." />
+        <meta name="description" content="Türkiye'nin en güvenilir hayvan pazarı. Büyükbaş, küçükbaş, kanatlı hayvanlar ve daha fazlası. Ücretsiz ilan ver, hemen satış yap!" />
+        <meta name="keywords" content="hayvan pazarı, satılık inek, satılık koyun, satılık keçi, büyükbaş hayvan, küçükbaş hayvan, hayvan alım satım" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="HayvanPazarı.com - Türkiye'nin En Büyük Hayvan Pazarı" />
+        <meta property="og:description" content="Türkiye'nin en güvenilir hayvan pazarı. Ücretsiz ilan ver, hemen satış yap!" />
+        <meta property="og:image" content="https://hayvanpazari.com/og-image.jpg" />
+        <meta property="og:url" content="https://hayvanpazari.com" />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="HayvanPazarı.com" />
+        <meta name="twitter:description" content="Türkiye'nin en güvenilir hayvan pazarı" />
+        
+        {/* Canonical */}
+        <link rel="canonical" href="https://hayvanpazari.com" />
+        
+        {/* Schema.org */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "HayvanPazarı.com",
+            "url": "https://hayvanpazari.com",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://hayvanpazari.com/ilanlar?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "HayvanPazarı.com",
+            "url": "https://hayvanpazari.com",
+            "logo": "https://hayvanpazari.com/logo.png",
+            "sameAs": [
+              "https://facebook.com/hayvanpazari",
+              "https://instagram.com/hayvanpazari"
+            ]
+          })
+        }} />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <main>
         <NavbarModern />
         <HeroModern />
 
-        {/* Categories Section */}
-        <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Kategoriler</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              İhtiyacınız olan kategoriyi seçin, binlerce ilan arasından size en uygununu bulun.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.slice(0, 4).map((category, idx) => {
-              const icons = [
-                <svg key="1" className="w-12 h-12 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>,
-                <svg key="2" className="w-12 h-12 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-                <svg key="3" className="w-12 h-12 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-                <svg key="4" className="w-12 h-12 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-              ];
-              return (
-                <Link
-                  key={category.id}
-                  href={`/ilanlar?category=${category.id}`}
-                  className="group bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 text-center"
-                >
-                  <div className="mb-4 transform group-hover:scale-110 transition-transform">
-                    {icons[idx]}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{category.name}</h3>
-                  <p className="text-green-600 text-sm font-medium">{category.count} ilan</p>
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link 
-              href="/kategoriler"
-              className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors"
-            >
-              Tüm Kategoriler
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
-
-        {/* Recent Listings Section */}
+        {/* Recent Listings Section -->
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-12">
@@ -173,7 +173,7 @@ export default function HomePage() {
         </section>
 
         <FooterModern />
-      </div>
+      </main>
     </>
   );
 }

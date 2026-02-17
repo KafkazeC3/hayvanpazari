@@ -1,18 +1,97 @@
 'use client';
 
 import Head from 'next/head';
+import Link from 'next/link';
 import { useState } from 'react';
-import { NavbarSimple } from '@/components/NavbarSimple';
-import { FooterSimple } from '@/components/FooterSimple';
+import { NavbarModern } from '@/components/NavbarModern';
+import { FooterModern } from '@/components/FooterModern';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useMessages } from '@/hooks/useMessages';
 import { mockListings } from '@/data/mockListings';
+import { 
+  LayoutGrid, 
+  Heart, 
+  MessageCircle, 
+  Settings, 
+  Plus, 
+  Eye, 
+  Edit2, 
+  Trash2,
+  CheckCircle,
+  XCircle,
+  Package,
+  TrendingUp,
+  MapPin,
+  Calendar
+} from 'lucide-react';
+
+// Mock user listings with status
+const userListings = mockListings.slice(0, 3).map(l => ({
+  ...l,
+  status: 'ACTIVE' as const,
+  viewCount: Math.floor(Math.random() * 500) + 50,
+  favoriteCount: Math.floor(Math.random() * 20) + 1,
+}));
+
+type ListingStatus = 'ACTIVE' | 'PASSIVE' | 'SOLD';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('listings');
-  const userListings = mockListings.slice(0, 3);
+  const [listings, setListings] = useState(userListings);
+  const { favorites, favoritesCount } = useFavorites();
+  const { getConversations, unreadCount } = useMessages();
+  
+  const favoriteListings = mockListings.filter(l => favorites.includes(l.id));
+  const conversations = getConversations();
   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('tr-TR').format(price) + ' ₺';
   };
+
+  const getStatusBadge = (status: ListingStatus) => {
+    switch (status) {
+      case 'ACTIVE':
+        return (
+          <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium">
+            <CheckCircle className="w-3 h-3" />
+            Aktif
+          </span>
+        );
+      case 'PASSIVE':
+        return (
+          <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-medium">
+            <XCircle className="w-3 h-3" />
+            Pasif
+          </span>
+        );
+      case 'SOLD':
+        return (
+          <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+            <Package className="w-3 h-3" />
+            Satıldı
+          </span>
+        );
+    }
+  };
+
+  const handleDeleteListing = (id: string) => {
+    if (confirm('Bu ilanı silmek istediğinize emin misiniz?')) {
+      setListings(prev => prev.filter(l => l.id !== id));
+    }
+  };
+
+  const handleStatusChange = (id: string, newStatus: ListingStatus) => {
+    setListings(prev => prev.map(l => 
+      l.id === id ? { ...l, status: newStatus } : l
+    ));
+  };
+
+  const menuItems = [
+    { id: 'listings', label: 'İlanlarım', icon: LayoutGrid, count: listings.length, href: '#listings' },
+    { id: 'favorites', label: 'Favorilerim', icon: Heart, count: favoritesCount, href: '#favorites' },
+    { id: 'messages', label: 'Mesajlarım', icon: MessageCircle, count: unreadCount, href: '#messages' },
+    { id: 'settings', label: 'Ayarlar', icon: Settings, href: '#settings' },
+  ];
 
   return (
     <>
@@ -21,182 +100,376 @@ export default function ProfilePage() {
         <meta name="description" content="Profilim ve ilanlarım" />
       </Head>
       
-      <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-        <NavbarSimple />
+      <div className="min-h-screen bg-gray-50">
+        <NavbarModern />
         
         {/* Cover */}
-        <div style={{ height: '200px', background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' }} />
+        <div className="h-48 bg-gradient-to-r from-green-500 to-green-600" />
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem', marginTop: '-100px' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 -mt-20">
             {/* Sidebar */}
-            <div>
+            <div className="lg:col-span-1">
               {/* Profile Card */}
-              <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textAlign: 'center', marginBottom: '1.5rem' }}>
-                <div style={{ 
-                  width: '120px', 
-                  height: '120px', 
-                  background: 'linear-gradient(135deg, #22c55e, #16a34a)', 
-                  borderRadius: '50%', 
-                  margin: '0 auto 1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '3rem',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  border: '4px solid white'
-                }}>
+              <div className="bg-white rounded-2xl shadow-sm p-6 text-center mb-6">
+                <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold border-4 border-white shadow-lg">
                   AY
                 </div>
-                <h2 style={{ color: '#111827', marginBottom: '0.25rem' }}>Ahmet Yılmaz</h2>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>ahmet@email.com</p>
-                <div style={{ 
-                  display: 'inline-block',
-                  background: '#dcfce7',
-                  color: '#166534',
-                  padding: '0.25rem 1rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.875rem',
-                  fontWeight: 600
-                }}>
-                  ✓ Doğrulanmış
-                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Ahmet Yılmaz</h2>
+                <p className="text-gray-500 text-sm mb-3">ahmet@email.com</p>
+                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium">
+                  <CheckCircle className="w-4 h-4" />
+                  Doğrulanmış
+                </span>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: 'bold', color: '#111827' }}>5</div>
-                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>İlan</div>
+                <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-gray-900">{listings.length}</div>
+                    <div className="text-xs text-gray-500">İlan</div>
                   </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: 'bold', color: '#111827' }}>12</div>
-                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Favori</div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-gray-900">{favoritesCount}</div>
+                    <div className="text-xs text-gray-500">Favori</div>
                   </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: 'bold', color: '#111827' }}>4.8</div>
-                    <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>Puan</div>
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-gray-900">4.8</div>
+                    <div className="text-xs text-gray-500">Puan</div>
                   </div>
                 </div>
               </div>
 
               {/* Menu */}
-              <div style={{ background: 'white', borderRadius: '1rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                {[
-                  { id: 'listings', label: '📋 İlanlarım', href: '#' },
-                  { id: 'favorites', label: '❤️ Favorilerim', href: '#' },
-                  { id: 'messages', label: '💬 Mesajlarım', href: '#' },
-                  { id: 'settings', label: '⚙️ Ayarlar', href: '#' },
-                ].map((item) => (
+              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                {menuItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    style={{
-                      width: '100%',
-                      padding: '1rem 1.5rem',
-                      textAlign: 'left',
-                      border: 'none',
-                      background: activeTab === item.id ? '#dcfce7' : 'white',
-                      color: activeTab === item.id ? '#166534' : '#374151',
-                      cursor: 'pointer',
-                      fontWeight: activeTab === item.id ? 600 : 400,
-                      borderLeft: activeTab === item.id ? '4px solid #22c55e' : '4px solid transparent'
-                    }}
+                    className={`w-full flex items-center justify-between px-6 py-4 text-left transition-colors ${
+                      activeTab === item.id 
+                        ? 'bg-green-50 text-green-700 border-l-4 border-green-500 font-semibold' 
+                        : 'text-gray-600 hover:bg-gray-50 border-l-4 border-transparent'
+                    }`}
                   >
-                    {item.label}
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.count !== undefined && item.count > 0 && (
+                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                        activeTab === item.id ? 'bg-green-200 text-green-800' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {item.count}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Main Content */}
-            <div>
+            <div className="lg:col-span-3">
+              {/* Listings Tab */}
               {activeTab === 'listings' && (
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontSize: '1.5rem', color: '#111827' }}>İlanlarım</h2>
-                    <a href="/ilan-ver" style={{ background: '#22c55e', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', textDecoration: 'none' }}>
-                      + Yeni İlan
-                    </a>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900">İlanlarım</h2>
+                    <Link 
+                      href="/ilan-ver"
+                      className="inline-flex items-center gap-2 bg-green-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-green-600 transition-colors"
+                    >
+                      <Plus className="w-5 h-5" />
+                      Yeni İlan
+                    </Link>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {userListings.map((listing) => (
-                      <div key={listing.id} style={{ background: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', display: 'flex', gap: '1.5rem' }}>
-                        <img src={listing.image} alt={listing.title} style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '0.5rem' }} />
-                        <div style={{ flex: 1 }}>
-                          <h3 style={{ color: '#111827', marginBottom: '0.25rem' }}>{listing.title}</h3>
-                          <p style={{ color: '#22c55e', fontWeight: 600, marginBottom: '0.5rem' }}>{formatPrice(listing.price)}</p>
-                          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>📍 {listing.city} • 📅 {listing.date}</p>
+                  {/* Stats Cards */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                          <Eye className="w-5 h-5 text-green-600" />
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                          <button style={{ padding: '0.5rem 1rem', background: '#22c55e', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer' }}>
-                            Düzenle
-                          </button>
-                          <button style={{ padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '0.375rem', cursor: 'pointer' }}>
-                            Sil
-                          </button>
+                        <div>
+                          <div className="text-2xl font-bold text-gray-900">
+                            {listings.reduce((acc, l) => acc + l.viewCount, 0).toLocaleString()}
+                          </div>
+                          <div className="text-sm text-gray-500">Toplam Görüntülenme</div>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                          <Heart className="w-5 h-5 text-red-500" />
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-gray-900">
+                            {listings.reduce((acc, l) => acc + l.favoriteCount, 0)}
+                          </div>
+                          <div className="text-sm text-gray-500">Favori Sayısı</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <TrendingUp className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-gray-900">
+                            {listings.filter(l => l.status === 'ACTIVE').length}
+                          </div>
+                          <div className="text-sm text-gray-500">Aktif İlan</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Listings List */}
+                  <div className="space-y-4">
+                    {listings.length === 0 ? (
+                      <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Package className="w-10 h-10 text-gray-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">Henüz ilanınız yok</h3>
+                        <p className="text-gray-500 mb-6">İlk ilanınızı vermek için tıklayın</p>
+                        <Link 
+                          href="/ilan-ver"
+                          className="inline-flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors"
+                        >
+                          <Plus className="w-5 h-5" />
+                          İlan Ver
+                        </Link>
+                      </div>
+                    ) : (
+                      listings.map((listing) => (
+                        <div key={listing.id} className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex gap-4">
+                            <img 
+                              src={listing.images?.[0] || listing.image} 
+                              alt={listing.title} 
+                              className="w-32 h-24 object-cover rounded-lg flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <h3 className="font-semibold text-gray-900 truncate mb-1">{listing.title}</h3>
+                                  <p className="text-green-600 font-bold mb-2">{formatPrice(listing.price)}</p>
+                                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                                    <span className="flex items-center gap-1">
+                                      <MapPin className="w-4 h-4" />
+                                      {listing.city}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <Calendar className="w-4 h-4" />
+                                      {listing.date}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <Eye className="w-4 h-4" />
+                                      {listing.viewCount}
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <Heart className="w-4 h-4" />
+                                      {listing.favoriteCount}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex flex-col items-end gap-2">
+                                  {getStatusBadge(listing.status)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Actions */}
+                          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                            <Link 
+                              href={`/ilan/${listing.id}`}
+                              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Görüntüle
+                            </Link>
+                            <button className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                              <Edit2 className="w-4 h-4" />
+                              Düzenle
+                            </button>
+                            <select
+                              value={listing.status}
+                              onChange={(e) => handleStatusChange(listing.id, e.target.value as ListingStatus)}
+                              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-green-500 outline-none"
+                            >
+                              <option value="ACTIVE">Aktif</option>
+                              <option value="PASSIVE">Pasif</option>
+                              <option value="SOLD">Satıldı</option>
+                            </select>
+                            <button 
+                              onClick={() => handleDeleteListing(listing.id)}
+                              className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-auto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Sil
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}
 
+              {/* Favorites Tab */}
               {activeTab === 'favorites' && (
-                <div style={{ background: 'white', padding: '3rem', borderRadius: '1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>❤️</div>
-                  <h3 style={{ color: '#111827', marginBottom: '0.5rem' }}>Henüz favori ilanınız yok</h3>
-                  <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>Beğendiğiniz ilanları favorilere ekleyebilirsiniz</p>
-                  <a href="/ilanlar" style={{ background: '#22c55e', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', textDecoration: 'none' }}>
-                    İlanları Keşfet
-                  </a>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Favorilerim</h2>
+                  {favoriteListings.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Heart className="w-10 h-10 text-gray-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Henüz favori ilanınız yok</h3>
+                      <p className="text-gray-500 mb-6">Beğendiğiniz ilanları favorilere ekleyebilirsiniz</p>
+                      <Link 
+                        href="/ilanlar"
+                        className="inline-flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors"
+                      >
+                        İlanları Keşfet
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {favoriteListings.map(listing => (
+                        <Link 
+                          key={listing.id}
+                          href={`/ilan/${listing.id}`}
+                          className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex gap-4"
+                        >
+                          <img 
+                            src={listing.images?.[0] || listing.image} 
+                            alt={listing.title}
+                            className="w-24 h-20 object-cover rounded-lg flex-shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-gray-900 truncate">{listing.title}</h3>
+                            <p className="text-green-600 font-bold">{formatPrice(listing.price)}</p>
+                            <p className="text-sm text-gray-500">{listing.city}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
+              {/* Messages Tab */}
               {activeTab === 'messages' && (
-                <div style={{ background: 'white', padding: '3rem', borderRadius: '1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>💬</div>
-                  <h3 style={{ color: '#111827', marginBottom: '0.5rem' }}>Henüz mesajınız yok</h3>
-                  <p style={{ color: '#6b7280' }}>İlan sahipleriyle iletişime geçmek için mesaj gönderebilirsiniz</p>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Mesajlarım</h2>
+                  {conversations.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <MessageCircle className="w-10 h-10 text-gray-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Henüz mesajınız yok</h3>
+                      <p className="text-gray-500 mb-6">İlan sahipleriyle iletişime geçmek için mesaj gönderebilirsiniz</p>
+                      <Link 
+                        href="/ilanlar"
+                        className="inline-flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors"
+                      >
+                        İlanları Keşfet
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                      {conversations.map((conv) => (
+                        <Link
+                          key={conv.key}
+                          href="/mesajlar"
+                          className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
+                        >
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                            {conv.userName.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-semibold text-gray-900">{conv.userName}</span>
+                              <span className="text-xs text-gray-400">
+                                {new Date(conv.lastMessageTime).toLocaleDateString('tr-TR')}
+                              </span>
+                            </div>
+                            {conv.listingTitle && (
+                              <p className="text-xs text-green-600 mb-1">İlan: {conv.listingTitle}</p>
+                            )}
+                            <p className={`text-sm truncate ${conv.unreadCount > 0 ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>
+                              {conv.lastMessage}
+                            </p>
+                          </div>
+                          {conv.unreadCount > 0 && (
+                            <span className="w-6 h-6 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                              {conv.unreadCount}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
+              {/* Settings Tab */}
               {activeTab === 'settings' && (
-                <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem' }}>
-                  <h2 style={{ fontSize: '1.5rem', color: '#111827', marginBottom: '1.5rem' }}>Hesap Ayarları</h2>
+                <div className="bg-white rounded-2xl shadow-sm p-8">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Hesap Ayarları</h2>
                   
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      Ad Soyad
-                    </label>
-                    <input type="text" defaultValue="Ahmet Yılmaz" style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }} />
-                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Ad Soyad
+                      </label>
+                      <input 
+                        type="text" 
+                        defaultValue="Ahmet Yılmaz" 
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                      />
+                    </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      E-posta
-                    </label>
-                    <input type="email" defaultValue="ahmet@email.com" style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }} />
-                  </div>
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        E-posta
+                      </label>
+                      <input 
+                        type="email" 
+                        defaultValue="ahmet@email.com" 
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                      />
+                    </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', color: '#374151', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      Telefon
-                    </label>
-                    <input type="tel" defaultValue="0555 123 4567" style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }} />
-                  </div>
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Telefon
+                      </label>
+                      <input 
+                        type="tel" 
+                        defaultValue="0555 123 4567" 
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
+                      />
+                    </div>
 
-                  <button style={{ background: '#22c55e', color: 'white', padding: '0.75rem 2rem', border: 'none', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
-                    Değişiklikleri Kaydet
-                  </button>
+                    <div className="pt-4">
+                      <button className="bg-green-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors">
+                        Değişiklikleri Kaydet
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div style={{ marginTop: '4rem' }}>
-          <FooterSimple />
+        <div className="mt-16">
+          <FooterModern />
         </div>
       </div>
     </>

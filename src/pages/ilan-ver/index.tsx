@@ -4,8 +4,10 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { NavbarSimple } from '@/components/NavbarSimple';
 import { FooterSimple } from '@/components/FooterSimple';
+import { ImageUploader } from '@/components/ImageUploader';
 import { categories } from '@/data/mockListings';
 import { sortedCities, getDistricts } from '@/data/cities';
+import { Loader2, CheckCircle } from 'lucide-react';
 
 export default function CreateListingPage() {
   const [step, setStep] = useState(1);
@@ -28,9 +30,24 @@ export default function CreateListingPage() {
     setFormData({ ...formData, city: cityName, district: '' });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('İlanınız başarıyla oluşturuldu! Onay sürecinden sonra yayınlanacak.');
+    
+    if (formData.images.length === 0) {
+      alert('Lütfen en az bir fotoğraf yükleyin.');
+      return;
+    }
+
+    setSubmitting(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
   return (
@@ -262,47 +279,17 @@ export default function CreateListingPage() {
               <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
                 <h2 style={{ fontSize: '1.5rem', color: '#111827', marginBottom: '1.5rem' }}>Fotoğraflar</h2>
                 
-                <div style={{ 
-                  border: '2px dashed #d1d5db', 
-                  borderRadius: '0.5rem', 
-                  padding: '3rem', 
-                  textAlign: 'center',
-                  marginBottom: '1.5rem'
-                }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📷</div>
-                  <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-                    Fotoğrafları sürükleyip bırakın veya tıklayarak seçin
-                  </p>
-                  <input type="file" multiple accept="image/*" style={{ display: 'none' }} />
-                  <button
-                    type="button"
-                    style={{
-                      padding: '0.75rem 1.5rem',
-                      background: '#f3f4f6',
-                      border: 'none',
-                      borderRadius: '0.5rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Fotoğraf Seç
-                  </button>
-                </div>
+                <ImageUploader 
+                  images={formData.images}
+                  onImagesChange={(images) => setFormData({...formData, images})}
+                  maxImages={10}
+                />
 
-                <div style={{ background: '#fef3c7', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-                  <p style={{ color: '#92400e', fontSize: '0.875rem' }}>
-                    ℹ️ İpuçları:
-                  </p>
-                  <ul style={{ color: '#92400e', fontSize: '0.875rem', margin: '0.5rem 0 0 1rem' }}>
-                    <li>En az 3 fotoğraf yükleyin</li>
-                    <li>Hayvanı farklı açılardan çekin</li>
-                    <li>Gün ışığında çekim yapın</li>
-                  </ul>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                   <button
                     type="button"
                     onClick={() => setStep(2)}
+                    disabled={submitting}
                     style={{
                       flex: 1,
                       padding: '1rem',
@@ -311,26 +298,74 @@ export default function CreateListingPage() {
                       border: 'none',
                       borderRadius: '0.5rem',
                       fontWeight: 600,
-                      cursor: 'pointer'
+                      cursor: submitting ? 'not-allowed' : 'pointer',
+                      opacity: submitting ? 0.6 : 1
                     }}
                   >
                     ← Geri
                   </button>
                   <button
                     type="submit"
+                    disabled={submitting || formData.images.length === 0}
                     style={{
                       flex: 1,
                       padding: '1rem',
-                      background: '#22c55e',
+                      background: formData.images.length === 0 ? '#d1d5db' : '#22c55e',
                       color: 'white',
                       border: 'none',
                       borderRadius: '0.5rem',
                       fontWeight: 600,
-                      cursor: 'pointer'
+                      cursor: submitting || formData.images.length === 0 ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem'
                     }}
                   >
-                    İlanı Yayınla 🚀
+                    {submitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Yayınlanıyor...
+                      </>
+                    ) : (
+                      'İlanı Yayınla'
+                    )}
                   </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Success State */}
+            {submitted && (
+              <div style={{ 
+                background: 'white', 
+                padding: '3rem', 
+                borderRadius: '1rem', 
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                textAlign: 'center'
+              }}>
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="w-10 h-10 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  İlanınız Başarıyla Oluşturuldu!
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  İlanınız onay sürecinden sonra yayınlanacak. Size bildirim göndereceğiz.
+                </p>
+                <div className="flex gap-4 justify-center">
+                  <a
+                    href="/"
+                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    Ana Sayfa
+                  </a>
+                  <a
+                    href="/ilanlar"
+                    className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+                  >
+                    İlanları Gör
+                  </a>
                 </div>
               </div>
             )}
