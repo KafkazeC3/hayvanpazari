@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import { 
   Menu, X, Search, PlusCircle, Heart, User, MessageCircle, 
@@ -34,7 +34,8 @@ export function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const pathname = usePathname();
+  const router = useRouter();
+  const pathname = router.pathname;
   
   const { data: session, status } = useSession();
   const { favorites } = useFavorites();

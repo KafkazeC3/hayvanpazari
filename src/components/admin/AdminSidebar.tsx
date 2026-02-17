@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { 
   LayoutDashboard, 
   Users, 
@@ -25,7 +25,8 @@ const menuItems = [
 ];
 
 export function AdminSidebar() {
-  const pathname = usePathname();
+  const router = useRouter();
+  const pathname = router.pathname;
   const [collapsed, setCollapsed] = useState(false);
 
   return (
