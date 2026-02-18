@@ -1,5 +1,22 @@
 {
-  "buildCommand": "prisma generate && prisma migrate deploy && next build",
-  "framework": "nextjs",
-  "regions": ["fra1"]
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
+    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
+    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret",
+    "NEXTAUTH_SECRET": "@nextauth_secret"
+  }
 }
