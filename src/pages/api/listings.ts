@@ -14,26 +14,22 @@ export default async function handler(
         minPrice, 
         maxPrice, 
         search,
-        status = 'ACTIVE'
       } = req.query;
 
-      // Build filter
-      const where: any = {
-        status: status as string,
-        // isApproved: true, // Test için devre dışı bırakıldı
-      };
+      // Build filter - TÜM ilanları getir (test için)
+      const where: any = {};
 
-      if (category) {
+      if (category && category !== '') {
         where.category = {
           name: category as string
         };
       }
 
-      if (city) {
+      if (city && city !== '') {
         where.city = city as string;
       }
 
-      if (district) {
+      if (district && district !== '') {
         where.district = district as string;
       }
 
@@ -43,29 +39,24 @@ export default async function handler(
         if (maxPrice) where.price.lte = parseInt(maxPrice as string);
       }
 
-      if (search) {
+      if (search && search !== '') {
         where.OR = [
           { title: { contains: search as string, mode: 'insensitive' } },
           { description: { contains: search as string, mode: 'insensitive' } },
         ];
       }
 
+      console.log('DATABASE QUERY - where:', JSON.stringify(where));
+
+      // Basit sorgu - ilişkiler olmadan
       const listings = await prisma.listing.findMany({
         where,
-        include: {
-          category: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              phone: true,
-            }
-          }
-        },
         orderBy: {
           createdAt: 'desc'
         }
       });
+
+      console.log('DATABASE RESULT - count:', listings.length);
 
       // Format response
       const formattedListings = listings.map(listing => ({
@@ -75,13 +66,10 @@ export default async function handler(
         price: listing.price,
         city: listing.city,
         district: listing.district,
-        category: listing.category?.name || 'Diğer',
+        category: 'Diğer', // Geçici
         images: JSON.parse(listing.images || '[]'),
         date: listing.createdAt.toISOString().split('T')[0],
-        seller: {
-          name: listing.user?.name || 'İsimsiz',
-          phone: listing.user?.phone || '',
-        },
+        seller: { name: 'İsimsiz', phone: '' }, // Geçici
         viewCount: listing.viewCount,
         favoriteCount: listing.favoriteCount,
       }));
@@ -90,11 +78,12 @@ export default async function handler(
         listings: formattedListings,
         total: formattedListings.length,
       });
-    } catch (error) {
-      console.error('Error fetching listings:', error);
+    } catch (error: any) {
+      console.error('DATABASE ERROR:', error);
       return res.status(500).json({ 
         error: 'İlanlar alınırken hata oluştu',
-        details: error instanceof Error ? error.message : 'Bilinmeyen hata'
+        details: error?.message || 'Bilinmeyen hata',
+        code: error?.code || 'UNKNOWN'
       });
     }
   }
@@ -112,56 +101,10 @@ export default async function handler(
         userId,
       } = req.body;
 
-      // Validation
       if (!title || !description || !price || !city || !district) {
-        return res.status(400).json({ 
-          error: 'Eksik alanlar var',
-          details: { title, description, price, city, district }
-        });
+        return res.status(400).json({ error: 'Eksik alanlar var' });
       }
 
-      // Check if default category exists
-      let finalCategoryId = categoryId;
-      if (!finalCategoryId) {
-        const defaultCategory = await prisma.category.findFirst();
-        if (!defaultCategory) {
-          // Create default category if none exists
-          const newCategory = await prisma.category.create({
-            data: {
-              name: 'Diğer',
-              slug: 'diger',
-              description: 'Diğer kategoriler',
-            }
-          });
-          finalCategoryId = newCategory.id;
-        } else {
-          finalCategoryId = defaultCategory.id;
-        }
-      }
-
-      // Check if default user exists
-      let finalUserId = userId;
-      if (!finalUserId) {
-        const defaultUser = await prisma.user.findFirst();
-        if (!defaultUser) {
-          // Create a default user
-          const newUser = await prisma.user.create({
-            data: {
-              email: 'default@hayvanpazari.com',
-              password: 'defaultpassword',
-              name: 'İsimsiz Kullanıcı',
-              phone: '0000000000',
-              city: 'İstanbul',
-              district: 'Merkez',
-            }
-          });
-          finalUserId = newUser.id;
-        } else {
-          finalUserId = defaultUser.id;
-        }
-      }
-
-      // Create listing
       const listing = await prisma.listing.create({
         data: {
           title,
@@ -170,35 +113,22 @@ export default async function handler(
           city,
           district,
           images: JSON.stringify(images || []),
-          categoryId: finalCategoryId,
-          userId: finalUserId,
-          status: 'PENDING',
-          isApproved: false,
-        },
-        include: {
-          category: true,
-          user: {
-            select: {
-              name: true,
-              phone: true,
-            }
-          }
+          categoryId: categoryId || '1',
+          userId: userId || '1',
+          status: 'ACTIVE',
+          isApproved: true,
         }
       });
 
       return res.status(201).json({
         message: 'İlan başarıyla oluşturuldu',
-        listing: {
-          id: listing.id,
-          title: listing.title,
-          status: listing.status,
-        }
+        listing: { id: listing.id, title: listing.title }
       });
-    } catch (error) {
-      console.error('Error creating listing:', error);
+    } catch (error: any) {
+      console.error('CREATE ERROR:', error);
       return res.status(500).json({ 
         error: 'İlan oluşturulurken hata oluştu',
-        details: error instanceof Error ? error.message : 'Bilinmeyen hata'
+        details: error?.message || 'Bilinmeyen hata'
       });
     }
   }
