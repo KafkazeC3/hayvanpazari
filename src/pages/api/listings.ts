@@ -1,137 +1,96 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'GET') {
+  // Tüm hataları yakalayalım
+  try {
+    // Prisma'yı try-catch içinde import edelim
+    let prisma;
     try {
-      const { 
-        category, 
-        city, 
-        district, 
-        minPrice, 
-        maxPrice, 
-        search,
-      } = req.query;
-
-      // Build filter - TÜM ilanları getir (test için)
-      const where: any = {};
-
-      if (category && category !== '') {
-        where.category = {
-          name: category as string
-        };
-      }
-
-      if (city && city !== '') {
-        where.city = city as string;
-      }
-
-      if (district && district !== '') {
-        where.district = district as string;
-      }
-
-      if (minPrice || maxPrice) {
-        where.price = {};
-        if (minPrice) where.price.gte = parseInt(minPrice as string);
-        if (maxPrice) where.price.lte = parseInt(maxPrice as string);
-      }
-
-      if (search && search !== '') {
-        where.OR = [
-          { title: { contains: search as string, mode: 'insensitive' } },
-          { description: { contains: search as string, mode: 'insensitive' } },
-        ];
-      }
-
-      console.log('DATABASE QUERY - where:', JSON.stringify(where));
-
-      // Basit sorgu - ilişkiler olmadan
-      const listings = await prisma.listing.findMany({
-        where,
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
-
-      console.log('DATABASE RESULT - count:', listings.length);
-
-      // Format response
-      const formattedListings = listings.map(listing => ({
-        id: listing.id,
-        title: listing.title,
-        description: listing.description,
-        price: listing.price,
-        city: listing.city,
-        district: listing.district,
-        category: 'Diğer', // Geçici
-        images: JSON.parse(listing.images || '[]'),
-        date: listing.createdAt.toISOString().split('T')[0],
-        seller: { name: 'İsimsiz', phone: '' }, // Geçici
-        viewCount: listing.viewCount,
-        favoriteCount: listing.favoriteCount,
-      }));
-
-      return res.status(200).json({
-        listings: formattedListings,
-        total: formattedListings.length,
-      });
-    } catch (error: any) {
-      console.error('DATABASE ERROR:', error);
-      return res.status(500).json({ 
-        error: 'İlanlar alınırken hata oluştu',
-        details: error?.message || 'Bilinmeyen hata',
-        code: error?.code || 'UNKNOWN'
+      const prismaModule = await import('@/lib/prisma');
+      prisma = prismaModule.prisma;
+    } catch (importError: any) {
+      return res.status(500).json({
+        error: 'Prisma import hatası',
+        details: importError?.message || 'Bilinmeyen import hatası'
       });
     }
-  }
 
-  if (req.method === 'POST') {
-    try {
-      const {
-        title,
-        description,
-        price,
-        categoryId,
-        city,
-        district,
-        images,
-        userId,
-      } = req.body;
+    if (req.method === 'GET') {
+      try {
+        console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'TANIMLI' : 'TANIMLI DEĞİL');
+        
+        const listings = await prisma.listing.findMany({
+          orderBy: { createdAt: 'desc' }
+        });
 
-      if (!title || !description || !price || !city || !district) {
-        return res.status(400).json({ error: 'Eksik alanlar var' });
+        return res.status(200).json({
+          listings: listings.map((l: any) => ({
+            id: l.id,
+            title: l.title,
+            description: l.description,
+            price: l.price,
+            city: l.city,
+            district: l.district,
+            category: 'Diğer',
+            images: JSON.parse(l.images || '[]'),
+            date: l.createdAt.toISOString().split('T')[0],
+            seller: { name: 'İsimsiz', phone: '' },
+          })),
+          total: listings.length,
+        });
+      } catch (dbError: any) {
+        console.error('DATABASE ERROR:', dbError);
+        return res.status(500).json({ 
+          error: 'Database sorgu hatası',
+          details: dbError?.message,
+          code: dbError?.code,
+          meta: dbError?.meta
+        });
       }
-
-      const listing = await prisma.listing.create({
-        data: {
-          title,
-          description,
-          price: parseInt(price),
-          city,
-          district,
-          images: JSON.stringify(images || []),
-          categoryId: categoryId || '1',
-          userId: userId || '1',
-          status: 'ACTIVE',
-          isApproved: true,
-        }
-      });
-
-      return res.status(201).json({
-        message: 'İlan başarıyla oluşturuldu',
-        listing: { id: listing.id, title: listing.title }
-      });
-    } catch (error: any) {
-      console.error('CREATE ERROR:', error);
-      return res.status(500).json({ 
-        error: 'İlan oluşturulurken hata oluştu',
-        details: error?.message || 'Bilinmeyen hata'
-      });
     }
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    if (req.method === 'POST') {
+      try {
+        const { title, description, price, city, district, images } = req.body;
+
+        const listing = await prisma.listing.create({
+          data: {
+            title,
+            description,
+            price: parseInt(price),
+            city,
+            district,
+            images: JSON.stringify(images || []),
+            categoryId: '1',
+            userId: '1',
+            status: 'ACTIVE',
+            isApproved: true,
+          }
+        });
+
+        return res.status(201).json({
+          message: 'İlan başarıyla oluşturuldu',
+          listing: { id: listing.id, title: listing.title }
+        });
+      } catch (createError: any) {
+        console.error('CREATE ERROR:', createError);
+        return res.status(500).json({ 
+          error: 'İlan oluşturma hatası',
+          details: createError?.message,
+          code: createError?.code
+        });
+      }
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (globalError: any) {
+    console.error('GLOBAL ERROR:', globalError);
+    return res.status(500).json({ 
+      error: 'Genel API hatası',
+      details: globalError?.message || 'Bilinmeyen hata'
+    });
+  }
 }
