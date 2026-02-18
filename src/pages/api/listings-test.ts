@@ -5,9 +5,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log('API CALLED - DATABASE_URL:', process.env.DATABASE_URL ? 'VAR' : 'YOK');
+  
   try {
     // Basit test sorgusu
     const count = await prisma.listing.count();
+    console.log('DATABASE COUNT:', count);
     const listings = await prisma.listing.findMany({
       take: 5,
       select: {
