@@ -1,36 +1,28 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log('API CALLED - DATABASE_URL:', process.env.DATABASE_URL ? 'VAR' : 'YOK');
-  
   try {
-    // Basit test sorgusu
+    // Prisma'yı dynamic import edelim (Vercel için)
+    const { prisma } = await import('@/lib/prisma');
+    
     const count = await prisma.listing.count();
-    console.log('DATABASE COUNT:', count);
-    const listings = await prisma.listing.findMany({
-      take: 5,
-      select: {
-        id: true,
-        title: true,
-        price: true,
-        city: true,
-      }
-    });
-
+    
     return res.status(200).json({
+      success: true,
       total: count,
-      listings: listings,
-      database: 'connected',
+      message: 'Database bağlantısı başarılı'
     });
-  } catch (error) {
-    console.error('Database error:', error);
+  } catch (error: any) {
+    console.error('API HATASI:', error);
+    
     return res.status(500).json({
-      error: 'Database bağlantı hatası',
-      details: error instanceof Error ? error.message : 'Bilinmeyen hata',
+      success: false,
+      error: 'Database hatası',
+      message: error?.message || 'Bilinmeyen hata',
+      code: error?.code || 'UNKNOWN'
     });
   }
 }
